@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "specifications",
+  "info": {
+    "singularName": "specification",
+    "pluralName": "specifications",
+    "displayName": "Specification"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "apiName": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "productName": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "kind": {
+      "type": "string",
+      "required": true
+    },
+    "body": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

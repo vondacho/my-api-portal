@@ -1,0 +1,16 @@
+extends: ["spectral:oas"]
+
+rules:
+  required-x-product-slug:
+    description: Please provide a product slug for the api.
+    given: $.info
+    then:
+      field: x-product-slug
+      function: truthy
+
+  required-x-api-slug:
+    description: Please provide a slug for the api.
+    given: $.info
+    then:
+      field: x-api-slug
+      function: truthy

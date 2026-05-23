@@ -1,0 +1,47 @@
+asyncapi: 3.0.0
+info:
+  title: Booking API
+  description: Booking API
+  termsOfService: http://example.com/terms/
+  contact:
+    name: Example API Support
+    url: https://ptagency.ch/contact
+    email: techsupport@ptagency.ch
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+  x-product-slug: personal-training
+  x-api-slug: booking
+channels:
+  test:
+    address: test
+    messages:
+      testMessages:
+        $ref: '#/components/messages/testMessages'
+operations:
+  test:
+    action: receive
+    channel:
+      $ref: '#/channels/test'
+    messages:
+      - $ref: '#/channels/test/messages/testMessages'
+components:
+  messages:
+    testMessages:
+      payload:
+        anyOf:
+          - $ref: '#/components/schemas/objectWithKey'
+          - $ref: '#/components/schemas/objectWithKey2'
+  schemas:
+    objectWithKey:
+      type: object
+      properties:
+        key:
+          type: string
+          additionalProperties: false
+    objectWithKey2:
+      type: object
+      properties:
+        key2:
+          type: string
