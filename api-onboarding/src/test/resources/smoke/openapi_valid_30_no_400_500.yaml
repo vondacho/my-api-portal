@@ -1,4 +1,3 @@
----
 openapi: 3.0.3
 info:
   title: Booking API
@@ -14,10 +13,11 @@ info:
   version: 1.0.0
   x-product-slug: personal-training
   x-api-slug: booking
+  x-api-bundle: booking
 servers:
-- url: http://localhost:8080
-- url: http://0.0.0.0:8080
-- url: http://pta.api.booking.obya.ch
+  - url: http://localhost:8080
+  - url: http://0.0.0.0:8080
+  - url: http://pta.api.booking.obya.ch
 tags:
   - name: session
   - name: booking
@@ -41,17 +41,11 @@ paths:
         '200':
           description: OK
           content:
-            application/problem+json:
+            application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/SessionDto'
-        '401':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '403':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '500':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
     post:
       tags:
         - session
@@ -61,19 +55,9 @@ paths:
         '200':
           description: OK
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/SessionId'
-        '400':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
-        '401':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '403':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '422':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/ValidationError'
-        '500':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
   /sessions/{id}:
     parameters:
       - name: id
@@ -90,19 +74,9 @@ paths:
         '200':
           description: OK
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/SessionDto'
-        '400':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
-        '401':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '403':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '404':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/NotFound'
-        '500':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
     put:
       tags:
         - session
@@ -112,21 +86,9 @@ paths:
         '200':
           description: OK
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/SessionId'
-        '400':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
-        '401':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '403':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '404':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/NotFound'
-        '422':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/ValidationError'
-        '500':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
     delete:
       tags:
         - session
@@ -135,16 +97,6 @@ paths:
       responses:
         '204':
           description: No Content
-        '400':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
-        '401':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '403':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '404':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/NotFound'
-        '500':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
   /sessions/{id}/bookings:
     parameters:
       - name: id
@@ -161,21 +113,11 @@ paths:
         '200':
           description: OK
           content:
-            application/problem+json:
+            application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/BookingDto'
-        '400':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
-        '401':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '403':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '404':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/NotFound'
-        '500':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
   /sessions/{id}/bookings/{participant}:
     parameters:
       - name: id
@@ -197,21 +139,9 @@ paths:
         '200':
           description: OK
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/BookingId'
-        '400':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
-        '401':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '403':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '404':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/NotFound'
-        '422':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/ValidationError'
-        '500':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
     delete:
       tags:
         - booking
@@ -220,16 +150,6 @@ paths:
       responses:
         '204':
           description: No Content
-        '400':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
-        '401':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '403':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
-        '404':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/NotFound'
-        '500':
-          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
 components:
   schemas:
     BookingDto:

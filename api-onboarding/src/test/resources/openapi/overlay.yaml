@@ -9,3 +9,8 @@ actions:
       info:
         x-metrics-sli: '200ms'
         x-metrics-slo: '200ms'
+        x-score: 100
+        x-violations:
+          - name: 'Response time'
+            description: 'Response time should be less than 200ms'
+            severity: 'high'

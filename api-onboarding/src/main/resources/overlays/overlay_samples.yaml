@@ -1,0 +1,45 @@
+overlay: 1.0.0
+info:
+  title: Overlay for injecting scoring data into the API document
+  version: 1.0.0
+extends: '/openapi.yaml'
+actions:
+  - target: '$' # Root of document
+    update:
+      paths:
+        /registrations:
+          post:
+            requestBody:
+              content:
+                application/json:
+                  examples:
+                    test-file-uri:
+                      $ref: '#/components/examples/test-file-uri'
+                    test-http-uri:
+                      $ref: '#/components/examples/test-http-uri'
+            responses:
+              "200":
+                content:
+                  application/json:
+                    examples:
+                      test-valid-candidate:
+                        $ref: '#/components/examples/valid-candidate'
+                      test-scored-candidate:
+                        $ref: '#/components/examples/scored-candidate'
+              "201":
+                content:
+                  application/json:
+                    examples:
+                      test-registered-candidate:
+                        $ref: '#/components/examples/registered-candidate'
+      components:
+        examples:
+          test-file-uri:
+            description: "test"
+            value:
+              source: "file:///test/openapi.yaml"
+
+          test-http-uri:
+            description: "test"
+            value:
+              source: "https://test/openapi.yaml"

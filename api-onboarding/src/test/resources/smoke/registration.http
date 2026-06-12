@@ -1,0 +1,42 @@
+### Valid request
+POST http://localhost:8080/registrations
+Content-Type: application/json
+
+{
+  "source": "file:///Users/olivier/Labor/github/myApiPortal/api-onboarding/src/test/resources/smoke/openapi_valid_30_no_400_500.yaml"
+}
+
+### Valid request - but OpenAPI document is invalid (missing 'description' field)
+POST http://localhost:8080/registrations
+Content-Type: application/json
+
+{
+  "source": "file:///Users/olivier/Labor/github/myApiPortal/api-onboarding/src/test/resources/smoke/openapi_invalid_30_no_api_description.yaml"
+}
+
+### Valid request - but uri does not exist
+POST http://localhost:8080/registrations
+Content-Type: application/json
+
+{
+  "source": "file:///src/test/resources/smoke/doesnotexist.yaml"
+}
+
+### Invalid request - uri is malformed - bad scheme
+POST http://localhost:8080/registrations
+Content-Type: application/json
+
+{
+  "source": "test:///src/test/resources/smoke/valid_openapi_32.yaml"
+}
+
+### Invalid request - missing 'source' parameter
+POST http://localhost:8080/registrations
+Content-Type: application/json
+
+{
+  "test": "file:///src/test/resources/smoke/openapi.yaml"
+}
+
+### Invalid request - operation not allowed
+GET http://localhost:8080/registrations
