@@ -452,27 +452,42 @@ export interface ApiSpecificationSpecification
     draftAndPublish: true;
   };
   attributes: {
-    apiName: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
-    body: Schema.Attribute.Text & Schema.Attribute.Required;
+    body: Schema.Attribute.JSON & Schema.Attribute.Required;
+    bundleName: Schema.Attribute.String & Schema.Attribute.Required;
+    contract: Schema.Attribute.Enumeration<
+      [
+        'OPENAPI_V30',
+        'OPENAPI_V31',
+        'OPENAPI_V32',
+        'ASYNCAPI_V2',
+        'ASYNCAPI_V3',
+        'GRAPHQLS',
+        'WSDL_V11',
+        'WSDL_V20',
+        'OVERLAY_V10',
+        'OVERLAY_V11',
+      ]
+    > &
+      Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    kind: Schema.Attribute.String & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::specification.specification'
     > &
       Schema.Attribute.Private;
-    productName: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    productName: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
+    score: Schema.Attribute.JSON;
+    specId: Schema.Attribute.UID<''> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    version: Schema.Attribute.String & Schema.Attribute.Required;
+    violations: Schema.Attribute.JSON;
   };
 }
 

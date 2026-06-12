@@ -11,23 +11,55 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "apiName": {
+    "specId": {
+      "type": "uid",
+      "targetField": "",
+      "required": true
+    },
+    "name": {
       "type": "string",
       "required": true,
-      "unique": true
+      "unique": false
+    },
+    "version": {
+      "type": "string",
+      "required": true,
+      "regex": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
     },
     "productName": {
       "type": "string",
       "required": true,
-      "unique": true
+      "unique": false
     },
-    "kind": {
+    "bundleName": {
       "type": "string",
       "required": true
     },
+    "contract": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "OPENAPI_V30",
+        "OPENAPI_V31",
+        "OPENAPI_V32",
+        "ASYNCAPI_V2",
+        "ASYNCAPI_V3",
+        "GRAPHQLS",
+        "WSDL_V11",
+        "WSDL_V20",
+        "OVERLAY_V10",
+        "OVERLAY_V11"
+      ]
+    },
     "body": {
-      "type": "text",
+      "type": "json",
       "required": true
+    },
+    "score": {
+      "type": "json"
+    },
+    "violations": {
+      "type": "json"
     }
   }
 }
