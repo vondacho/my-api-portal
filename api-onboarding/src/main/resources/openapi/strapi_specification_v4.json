@@ -608,189 +608,8 @@
             "schema": {
               "$schema": "https://json-schema.org/draft/2020-12/schema",
               "description": "The document ID, represented by a UUID",
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$"
+              "type": "string"
             }
-          },
-          {
-            "name": "fields",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "$schema": "https://json-schema.org/draft/2020-12/schema",
-              "description": "The fields to return, this doesn't include populatable fields like relations, components, files, or dynamic zones",
-              "readOnly": true,
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "specId",
-                  "name",
-                  "version",
-                  "productName",
-                  "bundleName",
-                  "contract",
-                  "body",
-                  "score",
-                  "violations",
-                  "createdAt",
-                  "updatedAt",
-                  "publishedAt"
-                ]
-              }
-            },
-            "x-strapi-serialize": "querystring"
-          },
-          {
-            "name": "filters",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "$schema": "https://json-schema.org/draft/2020-12/schema",
-              "description": "Filters to apply to the query",
-              "type": "object",
-              "propertyNames": {
-                "type": "string",
-                "enum": [
-                  "specId",
-                  "name",
-                  "version",
-                  "productName",
-                  "bundleName",
-                  "contract",
-                  "body",
-                  "score",
-                  "violations",
-                  "createdAt",
-                  "updatedAt",
-                  "publishedAt"
-                ]
-              },
-              "additionalProperties": {}
-            },
-            "x-strapi-serialize": "querystring"
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "$schema": "https://json-schema.org/draft/2020-12/schema",
-              "description": "Sort the result",
-              "anyOf": [
-                {
-                  "type": "string",
-                  "enum": [
-                    "specId",
-                    "name",
-                    "version",
-                    "productName",
-                    "bundleName",
-                    "contract",
-                    "body",
-                    "score",
-                    "violations",
-                    "createdAt",
-                    "updatedAt",
-                    "publishedAt"
-                  ]
-                },
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "enum": [
-                      "specId",
-                      "name",
-                      "version",
-                      "productName",
-                      "bundleName",
-                      "contract",
-                      "body",
-                      "score",
-                      "violations",
-                      "createdAt",
-                      "updatedAt",
-                      "publishedAt"
-                    ]
-                  }
-                },
-                {
-                  "type": "object",
-                  "propertyNames": {
-                    "type": "string",
-                    "enum": [
-                      "specId",
-                      "name",
-                      "version",
-                      "productName",
-                      "bundleName",
-                      "contract",
-                      "body",
-                      "score",
-                      "violations",
-                      "createdAt",
-                      "updatedAt",
-                      "publishedAt"
-                    ]
-                  },
-                  "additionalProperties": {
-                    "type": "string",
-                    "enum": [
-                      "asc",
-                      "desc"
-                    ]
-                  }
-                },
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "propertyNames": {
-                      "type": "string",
-                      "enum": [
-                        "specId",
-                        "name",
-                        "version",
-                        "productName",
-                        "bundleName",
-                        "contract",
-                        "body",
-                        "score",
-                        "violations",
-                        "createdAt",
-                        "updatedAt",
-                        "publishedAt"
-                      ]
-                    },
-                    "additionalProperties": {
-                      "type": "string",
-                      "enum": [
-                        "asc",
-                        "desc"
-                      ]
-                    }
-                  }
-                }
-              ]
-            },
-            "x-strapi-serialize": "querystring"
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "$schema": "https://json-schema.org/draft/2020-12/schema",
-              "description": "Fetch documents based on their status. Default to \"published\" if not specified.",
-              "type": "string",
-              "enum": [
-                "draft",
-                "published"
-              ]
-            },
-            "x-strapi-serialize": "querystring"
           }
         ],
         "responses": {
@@ -807,9 +626,7 @@
                       "properties": {
                         "documentId": {
                           "description": "The document ID, represented by a UUID",
-                          "type": "string",
-                          "format": "uuid",
-                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$"
+                          "type": "string"
                         },
                         "id": {
                           "type": "string"
@@ -926,54 +743,8 @@
             "schema": {
               "$schema": "https://json-schema.org/draft/2020-12/schema",
               "description": "The document ID, represented by a UUID",
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$"
+              "type": "string"
             }
-          },
-          {
-            "name": "fields",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "$schema": "https://json-schema.org/draft/2020-12/schema",
-              "description": "The fields to return, this doesn't include populatable fields like relations, components, files, or dynamic zones",
-              "readOnly": true,
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "specId",
-                  "name",
-                  "version",
-                  "productName",
-                  "bundleName",
-                  "contract",
-                  "body",
-                  "score",
-                  "violations",
-                  "createdAt",
-                  "updatedAt",
-                  "publishedAt"
-                ]
-              }
-            },
-            "x-strapi-serialize": "querystring"
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "$schema": "https://json-schema.org/draft/2020-12/schema",
-              "description": "Fetch documents based on their status. Default to \"published\" if not specified.",
-              "type": "string",
-              "enum": [
-                "draft",
-                "published"
-              ]
-            },
-            "x-strapi-serialize": "querystring"
           }
         ],
         "responses": {
@@ -990,9 +761,7 @@
                       "properties": {
                         "documentId": {
                           "description": "The document ID, represented by a UUID",
-                          "type": "string",
-                          "format": "uuid",
-                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$"
+                          "type": "string"
                         },
                         "id": {
                           "anyOf": [

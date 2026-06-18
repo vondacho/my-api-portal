@@ -1,4 +1,4 @@
-package io.obya.api.onboarding.adapter.out.strapi.config;
+package io.obya.api.onboarding.adapter.out.config;
 
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;

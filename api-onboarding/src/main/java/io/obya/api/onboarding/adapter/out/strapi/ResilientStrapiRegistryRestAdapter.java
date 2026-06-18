@@ -43,4 +43,24 @@ public class ResilientStrapiRegistryRestAdapter extends StrapiRegistryRestAdapte
             return Try.failure(Violation.Code.DEPENDENCY_RESPONSE_NOT_READABLE.failure(e).get());
         return Try.failure(Violation.Code.DEPENDENCY_BAD_REQUEST.failure(e).get());
     }
+
+    @CircuitBreaker(name = "strapi", fallbackMethod = "fallbackAt")
+    @Bulkhead(name = "strapi")
+    @Retry(name = "strapi")
+    @Override
+    public Try<Specification> specificationAt(SpecificationId id, String...attributes) {
+        return super.specificationAt(id, attributes);
+    }
+
+    Try<SpecificationId> fallbackAt(HttpServerErrorException e) {
+        if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE)
+            return Try.failure(Violation.Code.DEPENDENCY_NOT_AVAILABLE.failure(e).get());
+        return Try.failure(Violation.Code.DEPENDENCY_INTERNAL_ERROR.failure(e).get());
+    }
+
+    Try<SpecificationId> fallbackAt(HttpClientErrorException e) {
+        if (e.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR)
+            return Try.failure(Violation.Code.DEPENDENCY_RESPONSE_NOT_READABLE.failure(e).get());
+        return Try.failure(Violation.Code.DEPENDENCY_BAD_REQUEST.failure(e).get());
+    }
 }

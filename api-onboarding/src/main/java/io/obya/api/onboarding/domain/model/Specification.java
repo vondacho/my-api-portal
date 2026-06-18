@@ -10,6 +10,7 @@ public record Specification(
         Contract contract,
         Metadata metadata,
         Scorecard score,
-        Supplier<String> body,
-        List<Violation> violations) {
+        String body,
+        List<Violation> violations,
+        SpecificationId id) {
 }

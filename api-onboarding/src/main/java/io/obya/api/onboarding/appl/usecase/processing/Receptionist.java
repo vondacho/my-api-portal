@@ -1,6 +1,5 @@
 package io.obya.api.onboarding.appl.usecase.processing;
 
-import io.obya.api.onboarding.appl.usecase.model.Violation;
 import io.obya.api.onboarding.appl.usecase.processing.reader.URIReader;
 import io.obya.api.onboarding.appl.usecase.workflow.State;
 import io.obya.api.onboarding.domain.model.Contract;

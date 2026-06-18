@@ -1,9 +1,14 @@
 package io.obya.api.onboarding.domain.model;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 public record Contract(Type type, Version version) {
+
+    public static Contract from(Version version) {
+        return new Contract(Type.findType(version), version);
+    }
 
     public enum Type {
         OPENAPI(Pattern.compile(".*openapi.*"),
@@ -38,7 +43,16 @@ public record Contract(Type type, Version version) {
                     return type;
                 }
             }
-            throw new IllegalArgumentException("Unknown contract type: " + text);
+            throw new IllegalArgumentException("Unknown contract type [%s]".formatted(text));
+        }
+
+        public static Type findType(Version version) {
+            for (Type type : values()) {
+                if (Arrays.asList(type.versions).contains(version)) {
+                    return type;
+                }
+            }
+            throw new IllegalArgumentException("No contract type linked to [%s]".formatted(version));
         }
 
         public Optional<Version> findVersion(String text) {
@@ -48,7 +62,7 @@ public record Contract(Type type, Version version) {
                     return Optional.of(version);
                 }
             }
-            throw new IllegalArgumentException("Unknown contract version: " + text);
+            throw new IllegalArgumentException("Unknown contract version [%s]".formatted(text));
         }
     }
 

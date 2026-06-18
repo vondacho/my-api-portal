@@ -11,15 +11,6 @@ Content-Type: application/json
     "bundleName": "test",
     "contract": "OPENAPI_V30",
     "body": [
-      {
-        "type": "paragraph",
-        "children": [
-          {
-            "type": "text",
-            "text": "A very short description goes here."
-          }
-        ]
-      }
     ]
   }
 }

@@ -13,28 +13,122 @@ servers:
   - url: /api/v1
     description: API onboarding server running in the DEV cluster
 paths:
-  /health:
-    get:
-      operationId: getHealth
-      summary: Get Health Status
-      description: Returns the health status of the application.
-      tags:
-        - actuator
-      responses:
-        "200":
-          description: Ok — application is healthy.
-          content:
-            text/plain:
-              schema:
-                type: string
-
   /registrations:
     post:
       operationId: submitCandidate
       summary: Submit a Candidate
-      description: Accepts a Candidate payload describing a specification source and contract type for processing.
+      description: Accepts a Candidate payload describing a specification source to be processed.
       tags:
         - registrations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Candidate'
+            examples:
+              file-candidate-uri:
+                $ref: '#/components/examples/file-candidate-uri'
+              http-candidate-uri:
+                $ref: '#/components/examples/http-candidate-uri'
+              invalid-candidate-uri:
+                $ref: '#/components/examples/invalid-candidate-uri'
+      responses:
+        "200":
+          description: Ok — candidate has been validated, and scored successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateProcessed'
+              examples:
+                valid-candidate:
+                  $ref: '#/components/examples/valid-candidate'
+                scored-candidate:
+                  $ref: '#/components/examples/scored-candidate'
+        "201":
+          description: Ok — candidate has been validated, scored, and registered successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateProcessed'
+              examples:
+                registered-candidate:
+                  $ref: '#/components/examples/registered-candidate'
+        "400":
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
+        "409":
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ResourceAlreadyExists'
+        "422":
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ValidationError'
+        "500":
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
+        "503":
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServiceUnavailable'
+
+  /registrations/{id}:
+    put:
+      operationId: updateSpecification
+      summary: Update an existing specification resource
+      description: Accepts a Candidate payload describing a specification source as simple update to be processed.
+      tags:
+        - registrations
+      parameters:
+        - name: id
+          in: path
+          description: ID of specification that needs to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Candidate'
+            examples:
+              file-candidate-uri:
+                $ref: '#/components/examples/file-candidate-uri'
+              http-candidate-uri:
+                $ref: '#/components/examples/http-candidate-uri'
+              invalid-candidate-uri:
+                $ref: '#/components/examples/invalid-candidate-uri'
+      responses:
+        "200":
+          description: Ok — existing specification has been updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateProcessed'
+              examples:
+                valid-candidate:
+                  $ref: '#/components/examples/valid-candidate'
+                scored-candidate:
+                  $ref: '#/components/examples/scored-candidate'
+        "400":
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
+        "409":
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ResourceAlreadyExists'
+        "422":
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ValidationError'
+        "500":
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
+        "503":
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServiceUnavailable'
+
+  /registrations/{id}/upgrades:
+    post:
+      operationId: upgradeSpecification
+      summary: Upgrades an existing specification resource
+      description: Accepts a Candidate payload describing a specification source as new increment to be processed.
+      tags:
+        - registrations
+      parameters:
+        - name: id
+          in: path
+          description: ID of specification that needs to be upgraded
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -126,6 +220,7 @@ components:
             $ref: '#/components/schemas/Warning'
           description: "Detailed warnings encountered during processing"
       required:
+        - id
         - source
         - info
         - contract
@@ -185,6 +280,7 @@ components:
       type: string
       description: "Current processing status"
       enum:
+        - IMPLEMENTED
         - PUBLISHED
         - REGISTERED
         - SCORED

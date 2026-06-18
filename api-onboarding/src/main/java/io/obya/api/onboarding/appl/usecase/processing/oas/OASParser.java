@@ -1,24 +1,26 @@
 package io.obya.api.onboarding.appl.usecase.processing.oas;
 
-import io.obya.api.onboarding.appl.usecase.model.Violation;
 import io.obya.api.onboarding.appl.usecase.processing.Processor;
 import io.obya.api.onboarding.appl.usecase.processing.reader.URIReader;
 import io.obya.api.onboarding.appl.usecase.workflow.State;
+import io.obya.api.onboarding.domain.model.Info;
+import io.obya.api.onboarding.domain.model.Metadata;
 import io.obya.common.util.Try;
 import io.openapiparser.*;
 import io.openapiprocessor.jackson.JacksonConverter;
 import io.openapiprocessor.jackson.JacksonJsonWriter;
 import io.openapiprocessor.jsonschema.reader.StringReader;
 import io.openapiprocessor.jsonschema.schema.*;
+import org.semver4j.Semver;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
 
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.MISSING_DATA;
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.PROCESSING_FAILED;
-import static io.obya.api.onboarding.appl.usecase.processing.Validator.nonNull;
+import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.*;
+import static io.obya.api.onboarding.appl.usecase.processing.Validator.*;
 import static io.obya.api.onboarding.appl.usecase.processing.reader.URIReader.readerFor;
+import static io.obya.api.onboarding.domain.model.Metadata.*;
 
 abstract class OASParser<M> implements Processor<State> {
 
@@ -59,17 +61,60 @@ abstract class OASParser<M> implements Processor<State> {
         return new ParsingResult<>(initModel(result), result);
     }
 
-    abstract M initModel(OpenApiResult result);
+    protected abstract M initModel(OpenApiResult result);
 
-    abstract Try<State> setInfo(State state, M model);
-
-    abstract Try<State> setMetadata(State state, M model);
-
-    Try<State> setModel(State state, M model) {
+    protected Try<State> setModel(State state, M model) {
         return Try.success(state.model(model));
     }
 
-    Try<State> setBody(State state, OpenApiResult parsingResult) {
+    protected Try<State> setInfo(State state, M model) {
+        Semver version = semver(nonNull(getVersion(model), MISSING_DATA.failure("info.version")),
+                VERSION_NOT_COMPLIANT.failure("info.version"));
+
+        final Try<Info> info = Try.success(new Info(
+                        getTitle(model),
+                        getDescription(model),
+                        version)
+                )
+                .filter(i -> nonEmpty(i::title), MISSING_DATA.failure("info.title"))
+                .filter(i -> nonEmpty(i::description), MISSING_DATA.failure("info.description"));
+
+        return info.hasExceptions() ?
+                info.flatMap(_ -> Try.failure(PARSING_FAILED.failure(state.source(), "state.info").get())) :
+                info.map(state::info);
+    }
+
+    protected abstract String getTitle(M model);
+    protected abstract String getDescription(M model);
+    protected abstract String getVersion(M model);
+
+    protected Try<State> setMetadata(State state, M model) {
+        Semver componentVersion = getComponentVersion(model) == null ? null :
+                semver(getComponentVersion(model), VERSION_NOT_COMPLIANT.failure(META_COMPONENT_VERSION_KEY));
+
+        final Try<Metadata> metadata = Try.success(new Metadata(
+                        getName(model),
+                        getBundleName(model),
+                        getProductName(model),
+                        getComponentName(model),
+                        componentVersion
+                ))
+                .filter(m -> nonEmpty(m::apiName), MISSING_DATA.failure(META_API_NAME_KEY))
+                .filter(m -> nonEmpty(m::bundleName), MISSING_DATA.failure(META_BUNDLE_NAME_KEY))
+                .filter(m -> nonEmpty(m::productName), MISSING_DATA.failure(META_PRODUCT_NAME_KEY));
+
+        return metadata.hasExceptions() ?
+                metadata.flatMap(_ -> Try.failure(PARSING_FAILED.failure(state.source(), "state.metadata").get())) :
+                metadata.map(state::metadata);
+    }
+
+    protected abstract String getName(M model);
+    protected abstract String getBundleName(M model);
+    protected abstract String getProductName(M model);
+    protected abstract String getComponentName(M model);
+    protected abstract String getComponentVersion(M model);
+
+    protected Try<State> setBody(State state, OpenApiResult parsingResult) {
         return Try.success(state.body(() -> {
             try {
                 return toJson(parsingResult);
@@ -79,7 +124,7 @@ abstract class OASParser<M> implements Processor<State> {
         }));
     }
 
-    String toJson(OpenApiResult parsingResult) throws IOException {
+    protected static String toJson(OpenApiResult parsingResult) throws IOException {
         StringWriter stringWriter = new StringWriter();
         parsingResult.write(new JacksonJsonWriter(stringWriter));
         return stringWriter.toString();

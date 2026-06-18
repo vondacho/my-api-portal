@@ -1,1 +1,0 @@
-npx spectral lint openapi.yaml

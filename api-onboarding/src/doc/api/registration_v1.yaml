@@ -17,7 +17,7 @@ paths:
     get:
       operationId: getHealth
       summary: Get Health Status
-      description: Returns the health status of the application.
+      description: Returns the health statusx of the application.
       tags:
         - actuator
       responses:
@@ -179,7 +179,7 @@ components:
 
     Status:
       type: string
-      description: "Current processing status"
+      description: "Current processing statusx"
       enum:
         - PUBLISHED
         - REGISTERED

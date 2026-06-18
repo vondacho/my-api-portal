@@ -18,6 +18,9 @@ public class Overlayer implements Processor<State> {
 
     @Override
     public Try<State> process(Try<State> state) {
-       return state.flatMap(st -> strategy.process(Try.success(st.source(uri))));
+       return state.flatMap(st -> {
+           final URI originalUri = st.source();
+           return strategy.process(Try.success(st.source(uri))).map(s -> s.source(originalUri));
+       });
     }
 }

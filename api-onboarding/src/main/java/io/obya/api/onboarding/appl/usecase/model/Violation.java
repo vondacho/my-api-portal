@@ -3,18 +3,26 @@ package io.obya.api.onboarding.appl.usecase.model;
 import java.util.List;
 import java.util.function.Supplier;
 
-public record Violation(String detail, Severity severity) implements Comparable<Violation> {
+public record Violation(String detail, Code code, Severity severity) implements Comparable<Violation> {
 
     public enum Severity {
         MAJOR, MINOR
     }
 
     public enum Code {
-        PROCESSING_FAILED("The given uri [%s] cannot be processed [%s].", Severity.MAJOR),
+        PARSING_FAILED("Parsing of given uri [%s] failed [%s].", Severity.MAJOR),
+        SCORING_FAILED("Scoring of given uri [%s] failed [%s].", Severity.MINOR),
+        OVERLAYING_FAILED("Overlaying by given uri [%s] failed [%s].", Severity.MINOR),
+        PROCESSING_FAILED("Processing of given uri [%s] failed [%s].", Severity.MAJOR),
         MISSING_DATA("A required data is missing or empty [%s].", Severity.MAJOR),
+        VERSION_NOT_COMPLIANT("The given version is not semver compliant [%s].", Severity.MAJOR),
+        VERSION_NOT_INCREMENTED("The version [%s] must increment the latest one [%s].", Severity.MAJOR),
+        VERSION_AUTO_INCREMENTED("The version [%s] has been incremented to next patch [%s].", Severity.MINOR),
+        RESOURCE_NOT_FOUND("The [%s] resource [%s] does not exist.", Severity.MAJOR),
         INSUFFICIENT_SCORING("The score is too low [%s]", Severity.MAJOR),
         LINTING_RULE_VIOLATED("A linting rule must be respected [%s].", Severity.MAJOR),
         LINTING_RULE_TOLERATED("A linting rule should be respected [%s].", Severity.MINOR),
+        SPECIFICATION_NOT_FOUND("The specification resource [%s] could not be retrieved.", Severity.MAJOR),
         DEPENDENCY_INTERNAL_ERROR("The dependency [%s] encountered an error [%s].", Severity.MINOR),
         DEPENDENCY_NOT_AVAILABLE("The dependency [%s] is not available [%s].", Severity.MINOR),
         DEPENDENCY_BAD_REQUEST("The dependency [%s] rejected a bad request [%s].", Severity.MAJOR),
@@ -43,8 +51,8 @@ public record Violation(String detail, Severity severity) implements Comparable<
 
     public static Violation from(Exception failure) {
         return failure instanceof Failure ?
-            new Violation(failure.getMessage(), ((Failure) failure).code.severity) :
-            new Violation(failure.getMessage(), Severity.MAJOR);
+            new Violation(failure.getMessage(), ((Failure) failure).code, ((Failure) failure).code.severity) :
+            new Violation(failure.getMessage(), Code.PROCESSING_FAILED, Severity.MAJOR);
     }
 
     public static List<Violation> from(List<Exception> failures) {

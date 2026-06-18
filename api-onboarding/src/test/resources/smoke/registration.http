@@ -1,9 +1,17 @@
-### Valid request
+### Valid update request
+PUT http://localhost:8080/registrations/i5ggecrob5zg8f483xfnu24t?strict=false
+Content-Type: application/json
+
+{
+  "source": "file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/test/resources/smoke/openapi_valid_30.yaml"
+}
+
+### Valid submit request
 POST http://localhost:8080/registrations
 Content-Type: application/json
 
 {
-  "source": "file:///Users/olivier/Labor/github/myApiPortal/api-onboarding/src/test/resources/smoke/openapi_valid_30_no_400_500.yaml"
+  "source": "file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/test/resources/smoke/openapi_valid_30.yaml"
 }
 
 ### Valid request - but OpenAPI document is invalid (missing 'description' field)
@@ -11,7 +19,7 @@ POST http://localhost:8080/registrations
 Content-Type: application/json
 
 {
-  "source": "file:///Users/olivier/Labor/github/myApiPortal/api-onboarding/src/test/resources/smoke/openapi_invalid_30_no_api_description.yaml"
+  "source": "file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/test/resources/smoke/openapi_invalid_30_no_api_description.yaml"
 }
 
 ### Valid request - but uri does not exist

@@ -18,13 +18,11 @@ import io.obya.api.onboarding.appl.usecase.processing.oas.OASV32Parser;
 import io.obya.api.onboarding.appl.usecase.processing.reader.URIFileReader;
 import io.obya.api.onboarding.appl.usecase.processing.reader.URIHttpReader;
 import io.obya.api.onboarding.appl.usecase.processing.reader.URIReader;
-import io.obya.api.onboarding.appl.usecase.workflow.Flow;
 import io.obya.api.onboarding.domain.model.Contract;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -35,11 +33,11 @@ public class RegistrationConfig {
     @Bean
     public RegistrationService registrationService(Registry registry, ScorerDelegate remoteScorer) {
         return new RegistrationService(
-                new Flow(List.of(
-                    receptionist(),
-                    parser(),
-                    scorer(remoteScorer),
-                    scoreOverlayer())), registry);
+            receptionist(),
+            parser(),
+            scorer(remoteScorer),
+            scoreOverlayer(),
+            registry);
     }
 
     public Receptionist receptionist() {
@@ -61,31 +59,31 @@ public class RegistrationConfig {
     }
 
     public Overlayer scoreOverlayer() {
-        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/myApiPortal/api-onboarding/src/main/resources/overlays/overlay_scores.yaml"),
+        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_scores.yaml"),
                 new OverlayV10Parser(readers, (state, _) -> Map.of(
                     "score", state.score().global().evaluation()
                 )));
     }
 
     public Overlayer violationOverlayer() {
-        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/myApiPortal/api-onboarding/src/main/resources/overlays/overlay_violations.yaml"),
+        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_violations.yaml"),
                 new OverlayV10Parser(readers, (_, exceptions) -> Map.of(
                 "violations", Violation.from(exceptions)
                 )));
     }
 
     public Overlayer metricOverlayer() {
-        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/myApiPortal/api-onboarding/src/main/resources/overlays/overlay_metrics.yaml"),
+        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_metrics.yaml"),
                 new OverlayV10Parser(readers, (_,_) -> Map.of()));
     }
 
     public Overlayer rbacAbacOverlayer() {
-        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/myApiPortal/api-onboarding/src/main/resources/overlays/overlay_rbac_abac.yaml"),
+        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_rbac_abac.yaml"),
                 new OverlayV10Parser(readers, (_,_) -> Map.of()));
     }
 
     public Overlayer samplesOverlayer() {
-        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/myApiPortal/api-onboarding/src/main/resources/overlays/overlay_samples.yaml"),
+        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_samples.yaml"),
                 new OverlayV10Parser(readers, (_,_) -> Map.of()));
     }
 }

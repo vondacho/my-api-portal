@@ -1,5 +1,7 @@
 package io.obya.api.onboarding.appl.usecase.processing;
 
+import org.semver4j.Semver;
+
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -36,6 +38,10 @@ public interface Validator {
 
     static <E extends Exception> String nonEmpty(Supplier<String> value, Supplier<E> e) throws E {
         return nonEmpty(value.get(), e);
+    }
+
+    static <E extends Exception> Semver semver(String value, Supplier<E> e) throws E {
+        return Optional.ofNullable(Semver.coerce(value)).orElseThrow(e);
     }
 
     static <T> Predicate<T> requiredOf(T value) {

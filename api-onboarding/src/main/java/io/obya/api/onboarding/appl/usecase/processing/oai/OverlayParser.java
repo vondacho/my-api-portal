@@ -4,7 +4,6 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.ibm.oas.overlay.OverlayProcessor;
-import io.obya.api.onboarding.appl.usecase.model.Violation;
 import io.obya.api.onboarding.appl.usecase.processing.Processor;
 import io.obya.api.onboarding.appl.usecase.processing.reader.URIReader;
 import io.obya.api.onboarding.appl.usecase.workflow.State;
@@ -17,10 +16,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.MISSING_DATA;
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.PROCESSING_FAILED;
+import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.*;
 import static io.obya.api.onboarding.appl.usecase.processing.Validator.nonNull;
 import static io.obya.api.onboarding.appl.usecase.processing.reader.URIReader.readerFor;
 
@@ -49,7 +46,7 @@ public class OverlayParser implements Processor<State> {
                     return Try.success(st.body(() -> result));
 
                 } catch (IOException e) {
-                    return Try.failure(PROCESSING_FAILED.failure(st.source(), e).get());
+                    return Try.failure(OVERLAYING_FAILED.failure(st.source(), e).get());
                 }
             });
     }
