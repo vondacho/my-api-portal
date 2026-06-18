@@ -16,9 +16,6 @@ import java.nio.file.Path;
 
 import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
 
-/**
- * https://github.com/graphql-java/graphql-java
- */
 public class ParseAndValidateGraphQLAPITest {
 
     @Test

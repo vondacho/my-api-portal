@@ -11,9 +11,9 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
-  x-product-slug: personal-training
-  x-api-slug: booking
-  x-api-bundle: booking
+  x-api-name: booking
+  x-bundle-name: booking
+  x-product-name: personal-training
 servers:
   - url: http://localhost:8080
   - url: http://0.0.0.0:8080

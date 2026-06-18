@@ -1,0 +1,7 @@
+registry:
+  adapter: dummy
+
+spring:
+  mvc:
+    problemdetails:
+      enabled: true
