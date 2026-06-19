@@ -46,7 +46,7 @@ public class OverlayParser implements Processor<State> {
                     return Try.success(st.body(() -> result));
 
                 } catch (IOException e) {
-                    return Try.failure(OVERLAYING_FAILED.failure(st.source(), e).get());
+                    return new Try.Partial<>(st, List.of(OVERLAYING_FAILED.failure(st.source(), e).get()));
                 }
             });
     }
