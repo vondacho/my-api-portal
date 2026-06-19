@@ -68,20 +68,16 @@ abstract class OASParser<M> implements Processor<State> {
     }
 
     protected Try<State> setInfo(State state, M model) {
-        Semver version = semver(nonNull(getVersion(model), MISSING_DATA.failure("info.version")),
-                VERSION_NOT_COMPLIANT.failure("info.version"));
-
-        final Try<Info> info = Try.success(new Info(
+        final Semver version = getVersion(model) == null ? null : Semver.coerce(getVersion(model));
+        return Try.success(new Info(
                         getTitle(model),
                         getDescription(model),
                         version)
                 )
-                .filter(i -> nonEmpty(i::title), MISSING_DATA.failure("info.title"))
-                .filter(i -> nonEmpty(i::description), MISSING_DATA.failure("info.description"));
-
-        return info.hasExceptions() ?
-                info.flatMap(_ -> Try.failure(PARSING_FAILED.failure(state.source(), "state.info").get())) :
-                info.map(state::info);
+                .filter(i -> nonEmpty(i::title), MISSING_DATA.failure("info.title"), true)
+                .filter(i -> nonEmpty(i::description), MISSING_DATA.failure("info.description"), true)
+                .filter(i -> nonNull(i::version), MISSING_DATA.failure("info.version"), true)
+                .map(state::info);
     }
 
     protected abstract String getTitle(M model);
@@ -92,20 +88,17 @@ abstract class OASParser<M> implements Processor<State> {
         Semver componentVersion = getComponentVersion(model) == null ? null :
                 semver(getComponentVersion(model), VERSION_NOT_COMPLIANT.failure(META_COMPONENT_VERSION_KEY));
 
-        final Try<Metadata> metadata = Try.success(new Metadata(
+        return Try.success(new Metadata(
                         getName(model),
                         getBundleName(model),
                         getProductName(model),
                         getComponentName(model),
                         componentVersion
                 ))
-                .filter(m -> nonEmpty(m::apiName), MISSING_DATA.failure(META_API_NAME_KEY))
-                .filter(m -> nonEmpty(m::bundleName), MISSING_DATA.failure(META_BUNDLE_NAME_KEY))
-                .filter(m -> nonEmpty(m::productName), MISSING_DATA.failure(META_PRODUCT_NAME_KEY));
-
-        return metadata.hasExceptions() ?
-                metadata.flatMap(_ -> Try.failure(PARSING_FAILED.failure(state.source(), "state.metadata").get())) :
-                metadata.map(state::metadata);
+                .filter(m -> nonEmpty(m::apiName), MISSING_DATA.failure(META_API_NAME_KEY), true)
+                .filter(m -> nonEmpty(m::productName), MISSING_DATA.failure(META_PRODUCT_NAME_KEY), true)
+                .filter(m -> nonEmpty(m::bundleName), MISSING_DATA.failure(META_BUNDLE_NAME_KEY), true)
+                .map(state::metadata);
     }
 
     protected abstract String getName(M model);

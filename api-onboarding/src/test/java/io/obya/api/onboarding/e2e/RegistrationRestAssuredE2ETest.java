@@ -69,7 +69,7 @@ class RegistrationRestAssuredE2ETest {
 
     @Test
     void submit_validOpenApiV30_registersSpecAndReturns201() throws Exception {
-        URI specUri = specFileUri("e2e/openapi_v30_petstore.yaml");
+        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
 
         given()
                 .contentType(ContentType.JSON)
@@ -93,7 +93,7 @@ class RegistrationRestAssuredE2ETest {
 
     @Test
     void submit_validAsyncApiV30_registersSpecAndReturns201() throws Exception {
-        URI specUri = specFileUri("e2e/asyncapi_v30_notification.yaml");
+        URI specUri = specFileUri("e2e/asyncapi_v30_notification_v1_0_0.yaml");
 
         given()
                 .contentType(ContentType.JSON)
@@ -135,7 +135,7 @@ class RegistrationRestAssuredE2ETest {
     void submit_registryFails_returnsValidWithoutId() throws Exception {
         when(registry.register(any())).thenReturn(new Try.Failure<>(List.of()));
 
-        URI specUri = specFileUri("e2e/openapi_v30_petstore.yaml");
+        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
 
         given()
                 .contentType(ContentType.JSON)
@@ -204,7 +204,7 @@ class RegistrationRestAssuredE2ETest {
         // Registry returns the existing spec when the upgrade looks it up by id
         when(registry.infoAt(any(SpecificationId.class))).thenReturn(Try.success(existing));
 
-        URI specUri = specFileUri("e2e/openapi_v30_petstore.yaml");
+        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
 
         given()
                 .contentType(ContentType.JSON)
@@ -222,7 +222,7 @@ class RegistrationRestAssuredE2ETest {
     @Test
     void upgrade_withUnknownId_returnsError() throws Exception {
         // infoAt already returns Failure by default → currentVersion(id) fails
-        URI specUri = specFileUri("e2e/openapi_v30_petstore.yaml");
+        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
 
         given()
                 .contentType(ContentType.JSON)

@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: ""
+  description: A sample API whose required info.title is present but empty.
+  version: 1.0.0
+  x-api-name: petstore
+  x-bundle-name: petstore
+  x-product-name: platform
+servers:
+  - url: http://localhost:8080
+paths:
+  /pets:
+    get:
+      operationId: listPets
+      summary: List all pets
+      responses:
+        '200':
+          description: A list of pets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+components:
+  schemas:
+    Pet:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        tag:
+          type: string

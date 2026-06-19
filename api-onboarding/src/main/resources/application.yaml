@@ -3,6 +3,9 @@ info:
   description: onboarding api backend
   version: 1.0.0
 
+scorer:
+  adapter: dummy
+
 registry:
   adapter: strapi
 

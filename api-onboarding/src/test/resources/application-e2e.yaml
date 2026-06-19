@@ -1,6 +1,9 @@
 registry:
   adapter: dummy
 
+scorer:
+  adapter: dummy
+
 spring:
   mvc:
     problemdetails:

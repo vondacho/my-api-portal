@@ -50,6 +50,13 @@ public class RegistrationService {
                         .recoverWith(_ -> st)),  // no prior version → first submission, skip enforcement
                 overlayer).process(Try.success(new State().source(candidate)));
 
+        // Only a successfully scored specification is registered.  A spec that merely reached
+        // VALID (e.g. the scorer degraded gracefully) is returned as-is, without registration.
+        final boolean scored = state.getValue().map(st -> st.status() == Status.SCORED).orElse(false);
+        if (!scored) {
+            return state;
+        }
+
         return state
                 .map(st -> specificationOf(st, state.getExceptions()))
                 .flatMap(registry::register)

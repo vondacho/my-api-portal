@@ -34,14 +34,14 @@ public class ResilientStrapiRegistryRestAdapter extends StrapiRegistryRestAdapte
 
     Try<SpecificationId> fallback(HttpServerErrorException e) {
         if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE)
-            return Try.failure(Violation.Code.DEPENDENCY_NOT_AVAILABLE.failure(e).get());
-        return Try.failure(Violation.Code.DEPENDENCY_INTERNAL_ERROR.failure(e).get());
+            return Try.failure(Violation.Code.DEPENDENCY_NOT_AVAILABLE.failure("registry", e).get());
+        return Try.failure(Violation.Code.DEPENDENCY_INTERNAL_ERROR.failure("registry", e).get());
     }
 
     Try<SpecificationId> fallback(HttpClientErrorException e) {
         if (e.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR)
-            return Try.failure(Violation.Code.DEPENDENCY_RESPONSE_NOT_READABLE.failure(e).get());
-        return Try.failure(Violation.Code.DEPENDENCY_BAD_REQUEST.failure(e).get());
+            return Try.failure(Violation.Code.DEPENDENCY_RESPONSE_NOT_READABLE.failure("registry", e).get());
+        return Try.failure(Violation.Code.DEPENDENCY_BAD_REQUEST.failure("registry", e).get());
     }
 
     @CircuitBreaker(name = "strapi", fallbackMethod = "fallbackAt")
@@ -54,13 +54,13 @@ public class ResilientStrapiRegistryRestAdapter extends StrapiRegistryRestAdapte
 
     Try<SpecificationId> fallbackAt(HttpServerErrorException e) {
         if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE)
-            return Try.failure(Violation.Code.DEPENDENCY_NOT_AVAILABLE.failure(e).get());
-        return Try.failure(Violation.Code.DEPENDENCY_INTERNAL_ERROR.failure(e).get());
+            return Try.failure(Violation.Code.DEPENDENCY_NOT_AVAILABLE.failure("registry", e).get());
+        return Try.failure(Violation.Code.DEPENDENCY_INTERNAL_ERROR.failure("registry", e).get());
     }
 
     Try<SpecificationId> fallbackAt(HttpClientErrorException e) {
         if (e.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR)
-            return Try.failure(Violation.Code.DEPENDENCY_RESPONSE_NOT_READABLE.failure(e).get());
-        return Try.failure(Violation.Code.DEPENDENCY_BAD_REQUEST.failure(e).get());
+            return Try.failure(Violation.Code.DEPENDENCY_RESPONSE_NOT_READABLE.failure("registry", e).get());
+        return Try.failure(Violation.Code.DEPENDENCY_BAD_REQUEST.failure("registry", e).get());
     }
 }
