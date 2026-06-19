@@ -201,8 +201,9 @@ class RegistrationRestAssuredE2ETest {
                 List.of(),
                 new SpecificationId("mock-id"));
 
-        // Registry returns the existing spec when the upgrade looks it up by id
         when(registry.infoAt(any(SpecificationId.class))).thenReturn(Try.success(existing));
+        when(registry.infoAt(any(), any(), any())).thenReturn(Try.success(existing));
+        when(registry.register(any())).thenReturn(Try.success(new SpecificationId("upgrade-id")));
 
         URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
 
@@ -210,33 +211,17 @@ class RegistrationRestAssuredE2ETest {
                 .contentType(ContentType.JSON)
                 .body(new Candidate(specUri))
         .when()
-                .post("/registrations/mock-id/upgrades")
+                .post("/registrations")
         .then()
                 .statusCode(201)
+                .body("id", equalTo("upgrade-id"))
                 .body("status", equalTo("REGISTERED"))
                 .body("contract", equalTo("OPENAPI_V30"))
                 // Spec version 1.0.0 == existing 1.0.0 → auto-patch to 1.0.1, warning attached
+                .body("info.version", equalTo("1.0.1"))
                 .body("violations.code", hasItem("VERSION_AUTO_INCREMENTED"));
     }
 
-    @Test
-    void upgrade_withUnknownId_returnsError() throws Exception {
-        // infoAt already returns Failure by default → currentVersion(id) fails
-        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
-
-        given()
-                .contentType(ContentType.JSON)
-                .body(new Candidate(specUri))
-        .when()
-                .post("/registrations/unknown-id/upgrades")
-        .then()
-                .statusCode(400)
-                .contentType("application/problem+json")
-                .body("type", equalTo("https://problems-registry.smartbear.com/bad-request"))
-                .body("title", equalTo("Bad Request"))
-                .body("status", equalTo(400))
-                .body("errors", notNullValue());
-    }
 
     // -------------------------------------------------------------------------
     // Helper

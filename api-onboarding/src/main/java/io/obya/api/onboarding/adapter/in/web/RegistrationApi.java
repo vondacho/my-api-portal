@@ -46,18 +46,6 @@ public interface RegistrationApi {
             @RequestBody Candidate candidate);
 
     @Operation(
-            operationId = "upgradeExisting",
-            summary = "Upgrade an existing specification",
-            description = "Accepts a Candidate payload describing a specification source to be processed.",
-            tags = {"registrations"}
-    )
-    @PostMapping("/{id}/upgrades")
-    ResponseEntity<CandidateProcessed> upgrade(
-            @Parameter(description = "ID of the specification being upgraded", required = true, schema = @Schema(type = "string"))
-            @PathVariable(name = "id") SpecificationId id,
-            @RequestBody Candidate candidate);
-
-    @Operation(
             operationId = "scoreSpecification",
             summary = "Record a quality score for a specification",
             description = "Attaches a Scorecard to an existing specification resource. Not part of the published registration_v1 contract.",

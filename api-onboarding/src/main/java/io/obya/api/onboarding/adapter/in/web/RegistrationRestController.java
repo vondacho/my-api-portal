@@ -34,15 +34,6 @@ public class RegistrationRestController implements RegistrationApi {
     }
 
     @Override
-    public ResponseEntity<CandidateProcessed> upgrade(SpecificationId id, Candidate candidate) {
-        Try<State> state =  registrationService.upgrade(id, candidate.source());
-        return state.map(s -> ResponseEntity
-                        .status(s.status() == Status.REGISTERED ? CREATED : OK)
-                        .body(CandidateProcessed.from(s, Violation.from(state.getExceptions()))))
-                .getOrThrow(() -> new OnBoardingException(Violation.from(state.getExceptions())));
-    }
-
-    @Override
     public void score(SpecificationId id, Scorecard scorecard) {
 
     }

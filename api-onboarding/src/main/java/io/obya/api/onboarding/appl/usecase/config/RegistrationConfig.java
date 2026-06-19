@@ -4,10 +4,7 @@ import io.obya.api.onboarding.appl.out.ScorerDelegate;
 import io.obya.api.onboarding.appl.out.Registry;
 import io.obya.api.onboarding.appl.usecase.RegistrationService;
 import io.obya.api.onboarding.appl.usecase.model.Violation;
-import io.obya.api.onboarding.appl.usecase.processing.Receptionist;
-import io.obya.api.onboarding.appl.usecase.processing.Scorer;
-import io.obya.api.onboarding.appl.usecase.processing.Overlayer;
-import io.obya.api.onboarding.appl.usecase.processing.Parser;
+import io.obya.api.onboarding.appl.usecase.processing.*;
 import io.obya.api.onboarding.appl.usecase.processing.aas.AASV20Parser;
 import io.obya.api.onboarding.appl.usecase.processing.aas.AASV26Parser;
 import io.obya.api.onboarding.appl.usecase.processing.aas.AASV30Parser;
@@ -37,6 +34,7 @@ public class RegistrationConfig {
             parser(),
             scorer(remoteScorer),
             scoreOverlayer(),
+            versionEnforcer(registry),
             registry);
     }
 
@@ -56,6 +54,10 @@ public class RegistrationConfig {
                 Contract.Version.ASYNCAPI_V20, () -> new AASV20Parser(readers),
                 Contract.Version.ASYNCAPI_V26, () -> new AASV26Parser(readers),
                 Contract.Version.ASYNCAPI_V30, () -> new AASV30Parser(readers)));
+    }
+
+    public VersionEnforcer versionEnforcer(Registry registry) {
+        return new VersionEnforcer(registry);
     }
 
     public Overlayer scoreOverlayer() {

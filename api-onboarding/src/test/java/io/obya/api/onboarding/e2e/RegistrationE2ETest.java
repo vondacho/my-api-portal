@@ -69,7 +69,7 @@ class RegistrationE2ETest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-        assertCandidateRegistered(specUri, response.getBody(), Semver.parse("1.0.0"));
+        assertCandidateRegistered(specUri, response.getBody(), "mock-id", Semver.parse("1.0.0"));
     }
 
     @Test
@@ -164,38 +164,23 @@ class RegistrationE2ETest {
                 List.of(),
                 new SpecificationId("mock-id"));
 
-        // Registry returns the existing spec when the upgrade looks it up by id
         when(registry.infoAt(any(SpecificationId.class))).thenReturn(Try.success(existing));
+        when(registry.infoAt(any(), any(), any())).thenReturn(Try.success(existing));
+        when(registry.register(any())).thenReturn(Try.success(new SpecificationId("upgrade-id")));
 
         URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
         ResponseEntity<CandidateProcessed> response = rest.postForEntity(
-                "/registrations/mock-id/upgrades", new Candidate(specUri), CandidateProcessed.class);
+                "/registrations", new Candidate(specUri), CandidateProcessed.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-        assertCandidateRegistered(specUri, response.getBody(), Semver.parse("1.0.1"));
+        assertCandidateRegistered(specUri, response.getBody(), "upgrade-id", Semver.parse("1.0.1"));
 
         // Spec version 1.0.0 == existing 1.0.0 → auto-patch to 1.0.1, warning attached
         assertThat(response.getBody().violations())
                 .isNotNull()
                 .isNotEmpty()
                 .anyMatch(v -> v.code() == Violation.Code.VERSION_AUTO_INCREMENTED);
-    }
-
-    @Test
-    void upgrade_withUnknownId_returnsError() throws Exception {
-        // specificationAt already returns Failure by default → currentVersion(id) fails
-        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
-
-        ResponseEntity<ProblemDetail> response = rest.postForEntity(
-                "/registrations/unknown-id/upgrades",
-                new Candidate(specUri),
-                ProblemDetail.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
-
-        assertBadRequestProblem(response.getBody());
     }
 
     // -------------------------------------------------------------------------
@@ -206,10 +191,10 @@ class RegistrationE2ETest {
         return getClass().getClassLoader().getResource(classpathResource).toURI();
     }
 
-    private void assertCandidateRegistered(URI specUri, CandidateProcessed body, Semver expectedVersion) {
+    private void assertCandidateRegistered(URI specUri, CandidateProcessed body, String expectedId, Semver expectedVersion) {
         assertThat(body).isNotNull();
         assertThat(body.status()).isEqualTo(Status.REGISTERED);
-        assertThat(body.id()).isEqualTo("mock-id");
+        assertThat(body.id()).isEqualTo(expectedId);
         assertThat(body.contract()).isEqualTo(Contract.Version.OPENAPI_V30);
         assertThat(body.info()).isNotNull();
         assertThat(body.info().title()).isEqualTo("Petstore API");
