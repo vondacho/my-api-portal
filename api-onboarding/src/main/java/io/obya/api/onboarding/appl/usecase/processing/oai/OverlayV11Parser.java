@@ -9,7 +9,7 @@ import java.util.function.BiFunction;
 
 public class OverlayV11Parser extends OverlayParser {
 
-    public OverlayV11Parser(URIReader[] readers, BiFunction<State, List<Exception>, Map<String, Object>> mapper) {
+    public OverlayV11Parser(URIReader[] readers, BiFunction<State, List<Exception>, Object> mapper) {
         super(readers, mapper);
     }
 }

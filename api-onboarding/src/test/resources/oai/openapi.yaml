@@ -1,0 +1,271 @@
+---
+openapi: 3.0.3
+info:
+  title: Booking API
+  description: Booking API
+  termsOfService: http://example.com/terms/
+  contact:
+    name: Example API Support
+    url: https://ptagency.ch/contact
+    email: techsupport@ptagency.ch
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+  x-product-slug: personal-training
+  x-api-slug: booking
+servers:
+- url: http://localhost:8080
+- url: http://0.0.0.0:8080
+- url: http://pta.api.booking.obya.ch
+tags:
+  - name: session
+  - name: booking
+paths:
+  /sessions:
+    get:
+      tags:
+        - session
+      operationId: getAllSessions
+      description: Gets all sessions planned in an interval of dates.
+      parameters:
+      - name: from
+        in: query
+        schema:
+          $ref: '#/components/schemas/LocalDate'
+      - name: to
+        in: query
+        schema:
+          $ref: '#/components/schemas/LocalDate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/problem+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SessionDto'
+        '401':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '403':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '500':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
+    post:
+      tags:
+        - session
+      operationId: planSession
+      description: Plan one new session.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/SessionId'
+        '400':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
+        '401':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '403':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '422':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ValidationError'
+        '500':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
+  /sessions/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/SessionId'
+    get:
+      tags:
+        - session
+      operationId: getSessionDetails
+      description: Gets the details of one planned session.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/SessionDto'
+        '400':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
+        '401':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '403':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '404':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/NotFound'
+        '500':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
+    put:
+      tags:
+        - session
+      operationId: moveSession
+      description: Modifies one planned session.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/SessionId'
+        '400':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
+        '401':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '403':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '404':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/NotFound'
+        '422':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ValidationError'
+        '500':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
+    delete:
+      tags:
+        - session
+      operationId: cancelSession
+      description: Cancels one planned session.
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
+        '401':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '403':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '404':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/NotFound'
+        '500':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
+  /sessions/{id}/bookings:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/SessionId'
+    get:
+      tags:
+        - booking
+      operationId: getAllBookings
+      description: Gets all bookings of a given planned session.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/problem+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookingDto'
+        '400':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
+        '401':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '403':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '404':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/NotFound'
+        '500':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
+  /sessions/{id}/bookings/{participant}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/SessionId'
+      - name: participant
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ParticipantId'
+    post:
+      tags:
+        - booking
+      operationId: bookParticipant
+      description: Books one participant for one planned session.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/BookingId'
+        '400':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
+        '401':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '403':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '404':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/NotFound'
+        '422':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ValidationError'
+        '500':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
+    delete:
+      tags:
+        - booking
+      operationId: cancelBooking
+      description: Cancels one booking of one planned session.
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/BadRequest'
+        '401':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '403':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/Unauthorized'
+        '404':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/NotFound'
+        '500':
+          $ref: 'problem-rfc-1.0.0.json#/components/responses/ServerError'
+components:
+  schemas:
+    BookingDto:
+      type: object
+      properties:
+        session:
+          $ref: '#/components/schemas/SessionId'
+        participant:
+          $ref: '#/components/schemas/ParticipantId'
+    BookingId:
+      type: object
+      properties:
+        session:
+          $ref: '#/components/schemas/SessionId'
+        participant:
+          $ref: '#/components/schemas/ParticipantId'
+    LocalDate:
+      format: date
+      type: string
+      example: 2022-03-10
+    ParticipantId:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+    SessionDto:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/SessionId'
+    SessionId:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+    UUID:
+      format: uuid
+      pattern: '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}'
+      type: string

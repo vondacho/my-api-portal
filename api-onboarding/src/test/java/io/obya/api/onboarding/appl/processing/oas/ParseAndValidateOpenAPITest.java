@@ -1,4 +1,4 @@
-package io.obya.api.onboarding.appl.processing;
+package io.obya.api.onboarding.appl.processing.oas;
 
 import io.openapiparser.*;
 import io.openapiparser.model.v30.OpenApi;
@@ -41,7 +41,7 @@ public class ParseAndValidateOpenAPITest {
 
         // 3. parse the OpenAPI from resource or url.
         // here it loads an OpenAPI document from a resource file, but URI works too.
-        OpenApiResult openApiResult = parser.parse("/openapi/openapi.yaml");
+        OpenApiResult openApiResult = parser.parse("/oas/openapi.yaml");
         System.out.println(documents.getDocuments());
         System.out.println(openApiResult.bundle());
 
@@ -74,7 +74,7 @@ public class ParseAndValidateOpenAPITest {
 
         // 9. parse an overlay
         var overlayParser = new OverlayParser(new DocumentStore(), loader);
-        var overlayResult = overlayParser.parse("/openapi/overlay.yaml");
+        var overlayResult = overlayParser.parse("/oas/overlay.yaml");
 
         var shemaStore = new SchemaStore(loader);
         valid = overlayResult.validate(validator, shemaStore);

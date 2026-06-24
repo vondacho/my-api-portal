@@ -192,13 +192,14 @@ public class RegistrationServiceSteps {
         assertThat(result.getOrThrow().body().get()).contains(fragment);
     }
 
-    @Then("a scorecard is assigned")
-    public void aScorecardIsAssigned() {
+    @Then("a scorecard is assigned with global score of {int}")
+    public void aScorecardIsAssignedWithGlobalScore(Integer score) {
         Scorecard scorecard = result.getOrThrow().score();
         assertThat(scorecard).isNotNull();
         assertThat(scorecard.isUndefined())
                 .as("a scorecard should be assigned")
                 .isFalse();
+        assertThat(scorecard.global().evaluation()).isEqualTo(score);
     }
 
     @Then("no scorecard is assigned")

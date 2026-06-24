@@ -2,7 +2,6 @@ package io.obya.api.onboarding.appl.usecase.processing.oai;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
 import com.ibm.oas.overlay.OverlayProcessor;
 import io.obya.api.onboarding.appl.usecase.processing.Processor;
 import io.obya.api.onboarding.appl.usecase.processing.reader.URIReader;
@@ -14,7 +13,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiFunction;
 
 import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.*;
@@ -25,11 +23,11 @@ public class OverlayParser implements Processor<State> {
 
     private final URIReader[] readers;
 
-    private final MustacheFactory mf;
+    private final DefaultMustacheFactory mf;
 
-    private final BiFunction<State, List<Exception>, Map<String, Object>> mapper;
+    private final BiFunction<State, List<Exception>, Object> mapper;
 
-    public OverlayParser(URIReader[] readers, BiFunction<State, List<Exception>, Map<String, Object>> mapper) {
+    public OverlayParser(URIReader[] readers, BiFunction<State, List<Exception>, Object> mapper) {
         this.readers = readers;
         this.mf = new DefaultMustacheFactory();
         this.mapper = mapper;
@@ -51,12 +49,12 @@ public class OverlayParser implements Processor<State> {
             });
     }
 
-    String processOverlay(URI overlay, String body, Map<String, Object> data) throws IOException {
+    String processOverlay(URI overlay, String body, Object data) throws IOException {
         Mustache template = mf.compile(new StringReader(readerFor(overlay, readers).allInOne(overlay)), overlay.toString());
         return OverlayProcessor.processOverlay(body, instantiateOverlay(template, data));
     }
 
-    String instantiateOverlay(Mustache overlay, Map<String, Object> data) {
+    String instantiateOverlay(Mustache overlay, Object data) {
         StringWriter writer = new StringWriter();
         overlay.execute(writer, data);
         return writer.toString();

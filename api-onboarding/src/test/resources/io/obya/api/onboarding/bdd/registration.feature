@@ -11,7 +11,8 @@ Feature: API specification onboarding
     Then the onboarding succeeds
     And the specification id is "mock-id"
     And the contract version is "OPENAPI_V30"
-    And a scorecard is assigned
+    And a scorecard is assigned with global score of 74
+    And the specification body contains "x-score: 74"
     And the specification status is "REGISTERED"
     And the registry contains specification "mock-id"
     And the registry contains specification "petstore" for product "platform" at version "1.0.0"
@@ -22,7 +23,7 @@ Feature: API specification onboarding
     And the specification status is "REGISTERED"
     And the specification id is "mock-id"
     And the contract version is "ASYNCAPI_V30"
-    And a scorecard is assigned
+    And a scorecard is assigned with global score of 74
     And the registry contains specification "mock-id"
     And the registry contains specification "notification" for product "platform" at version "1.0.0"
 
@@ -77,7 +78,7 @@ Feature: API specification onboarding
     And the specification status is "REGISTERED"
     And the specification id is "mock-id"
     And the specification version is "1.0.1"
-    And a scorecard is assigned
+    And a scorecard is assigned with global score of 74
     And a warning with code "VERSION_AUTO_INCREMENTED" is reported
     And the registry contains specification "mock-id"
     And the registry contains specification "petstore" for product "platform" at version "1.0.1"

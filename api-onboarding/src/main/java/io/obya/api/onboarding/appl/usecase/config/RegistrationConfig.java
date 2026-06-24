@@ -63,7 +63,7 @@ public class RegistrationConfig {
     public Overlayer scoreOverlayer() {
         return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_scores.yaml"),
                 new OverlayV10Parser(readers, (state, _) -> Map.of(
-                    "score", state.score().global().evaluation()
+                    "score", state.score()
                 )));
     }
 

@@ -1,4 +1,4 @@
-package io.obya.api.onboarding.appl.processing;
+package io.obya.api.onboarding.appl.processing.graphql;
 
 import graphql.ExecutionResult;
 import graphql.GraphQL;

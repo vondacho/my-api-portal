@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 public class OverlayV10Parser extends OverlayParser {
 
-    public OverlayV10Parser(URIReader[] readers, BiFunction<State, List<Exception>, Map<String, Object>> mapper) {
+    public OverlayV10Parser(URIReader[] readers, BiFunction<State, List<Exception>, Object> mapper) {
         super(readers, mapper);
     }
 }

@@ -1,4 +1,4 @@
-package io.obya.api.onboarding.appl.processing;
+package io.obya.api.onboarding.appl.processing.aas;
 
 import com.asyncapi.v3._0_0.model.AsyncAPI;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,7 +23,7 @@ public class ParseAndValidateAsyncAPITest {
                 .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
 
         AsyncAPI model = objectMapper.readValue(
-                    Files.readString(Path.of("src/test/resources", "asyncapi" , "anyof-asyncapi.yml")),
+                    Files.readString(Path.of("src/test/resources", "aas", "anyof-asyncapi.yml")),
                     AsyncAPI.class);
 
         assertThat(model.getInfo().getDescription()).isEqualTo("Booking API");
