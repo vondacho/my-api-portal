@@ -14,9 +14,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
  */
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("io/obya/api/onboarding/bdd")
+@SelectClasspathResource("bdd")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "io.obya.api.onboarding.bdd")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
-//@ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "not @wip")
 public class RunRegistrationCucumberTest {
 }
