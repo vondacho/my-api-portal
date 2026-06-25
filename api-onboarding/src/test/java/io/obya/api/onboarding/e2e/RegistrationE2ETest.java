@@ -3,15 +3,9 @@ package io.obya.api.onboarding.e2e;
 import io.obya.api.onboarding.adapter.in.web.model.Candidate;
 import io.obya.api.onboarding.adapter.in.web.model.CandidateProcessed;
 import io.obya.api.onboarding.appl.out.Registry;
-import io.obya.api.onboarding.appl.usecase.model.Status;
-import io.obya.api.onboarding.appl.usecase.model.Violation;
-import io.obya.api.onboarding.domain.model.Contract;
-import io.obya.api.onboarding.domain.model.Info;
-import io.obya.api.onboarding.domain.model.Metadata;
-import io.obya.api.onboarding.domain.model.Scorecard;
-import io.obya.api.onboarding.domain.model.Specification;
-import io.obya.api.onboarding.domain.model.SpecificationId;
+import io.obya.api.onboarding.domain.model.*;
 import io.obya.common.util.Try;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.semver4j.Semver;
@@ -29,6 +23,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -50,8 +45,7 @@ class RegistrationE2ETest {
     @BeforeEach
     void setUpRegistry() {
         // No prior version found → first submission
-        when(registry.infoAt(any(SpecificationId.class))).thenReturn(new Try.Failure<>(List.of()));
-        when(registry.infoAt(any(String.class), any(String.class), any(Semver.class))).thenReturn(new Try.Failure<>(List.of()));
+        when(registry.at(anyString(), anyString(), any(Version.class))).thenReturn(new Try.Failure<>(List.of()));
         // Happy path: registration always succeeds
         when(registry.register(any())).thenReturn(Try.success(new SpecificationId("mock-id")));
     }
@@ -62,19 +56,19 @@ class RegistrationE2ETest {
 
     @Test
     void submit_validOpenApiV30_registersSpecAndReturns201() throws Exception {
-        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
+        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1.yaml");
 
         ResponseEntity<CandidateProcessed> response = rest.postForEntity(
                 "/registrations", new Candidate(specUri), CandidateProcessed.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-        assertCandidateRegistered(specUri, response.getBody(), "mock-id", Semver.parse("1.0.0"));
+        assertCandidateRegistered(specUri, response.getBody(), "mock-id", Version.from("v1"));
     }
 
     @Test
     void submit_validAsyncApiV30_registersSpecAndReturns201() throws Exception {
-        URI specUri = specFileUri("e2e/asyncapi_v30_notification_v1_0_0.yaml");
+        URI specUri = specFileUri("e2e/asyncapi_v30_notification_v1.yaml");
 
         ResponseEntity<CandidateProcessed> response = rest.postForEntity(
                 "/registrations", new Candidate(specUri), CandidateProcessed.class);
@@ -110,7 +104,7 @@ class RegistrationE2ETest {
     void submit_registryFails_returnsValidWithoutId() throws Exception {
         when(registry.register(any())).thenReturn(new Try.Failure<>(List.of()));
 
-        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
+        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1.yaml");
         ResponseEntity<CandidateProcessed> response = rest.postForEntity(
                 "/registrations", new Candidate(specUri), CandidateProcessed.class);
 
@@ -156,31 +150,34 @@ class RegistrationE2ETest {
     @Test
     void upgrade_withExistingSpec_autoIncrementsVersionAndReturns201() throws Exception {
         Specification existing = new Specification(
-                new Info("Petstore API", "A sample API.", Semver.parse("1.0.0")),
+                new Info("Petstore API", "A sample API.", Version.from("v1")),
                 Contract.from(Contract.Version.OPENAPI_V30),
-                new Metadata("petstore", "petstore", "platform", null, null),
+                new Metadata(
+                        "petstore",
+                        Revision.from("1.0.0"),
+                        "petstore",
+                        "platform", null, null),
                 Scorecard.undefined(),
                 "",
                 List.of(),
                 new SpecificationId("mock-id"));
 
-        when(registry.infoAt(any(SpecificationId.class))).thenReturn(Try.success(existing));
-        when(registry.infoAt(any(), any(), any())).thenReturn(Try.success(existing));
+        when(registry.at(anyString(), anyString(), any(Version.class))).thenReturn(Try.success(existing));
         when(registry.register(any())).thenReturn(Try.success(new SpecificationId("upgrade-id")));
 
-        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
+        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_1_0_0.yaml");
         ResponseEntity<CandidateProcessed> response = rest.postForEntity(
                 "/registrations", new Candidate(specUri), CandidateProcessed.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-        assertCandidateRegistered(specUri, response.getBody(), "upgrade-id", Semver.parse("1.0.1"));
+        assertCandidateRegistered(specUri, response.getBody(), "upgrade-id", Version.from("v1"));
 
-        // Spec version 1.0.0 == existing 1.0.0 → auto-patch to 1.0.1, warning attached
+        assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().violations())
                 .isNotNull()
                 .isNotEmpty()
-                .anyMatch(v -> v.code() == Violation.Code.VERSION_AUTO_INCREMENTED);
+                .anyMatch(v -> v.code() == Violation.Code.REVISION_AUTO_INCREMENTED);
     }
 
     // -------------------------------------------------------------------------
@@ -191,14 +188,14 @@ class RegistrationE2ETest {
         return getClass().getClassLoader().getResource(classpathResource).toURI();
     }
 
-    private void assertCandidateRegistered(URI specUri, CandidateProcessed body, String expectedId, Semver expectedVersion) {
+    private void assertCandidateRegistered(URI specUri, CandidateProcessed body, String expectedId, Version expectedVersion) {
         assertThat(body).isNotNull();
         assertThat(body.status()).isEqualTo(Status.REGISTERED);
         assertThat(body.id()).isEqualTo(expectedId);
         assertThat(body.contract()).isEqualTo(Contract.Version.OPENAPI_V30);
         assertThat(body.info()).isNotNull();
         assertThat(body.info().title()).isEqualTo("Petstore API");
-        assertThat(body.info().version()).isEqualTo(expectedVersion);
+        assertThat(body.info().version().major()).isEqualTo(expectedVersion.major());
         assertThat(body.metadata()).isNotNull();
         assertThat(body.metadata().apiName()).isEqualTo("petstore");
         assertThat(body.metadata().productName()).isEqualTo("platform");
@@ -213,7 +210,7 @@ class RegistrationE2ETest {
         assertThat(body.contract()).isEqualTo(Contract.Version.OPENAPI_V30);
         assertThat(body.info()).isNotNull();
         assertThat(body.info().title()).isEqualTo("Petstore API");
-        assertThat(body.info().version().getVersion()).isEqualTo("1.0.0");
+        assertThat(body.info().version().major()).isEqualTo(1);
         assertThat(body.metadata()).isNotNull();
         assertThat(body.metadata().apiName()).isEqualTo("petstore");
         assertThat(body.metadata().productName()).isEqualTo("platform");

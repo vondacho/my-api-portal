@@ -8,8 +8,8 @@ import io.obya.common.util.Try;
 import java.io.IOException;
 import java.net.URI;
 
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.MISSING_DATA;
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.PROCESSING_FAILED;
+import static io.obya.api.onboarding.domain.model.Violation.Code.MISSING_DATA;
+import static io.obya.api.onboarding.domain.model.Violation.Code.PROCESSING_FAILED;
 import static io.obya.api.onboarding.appl.usecase.processing.Validator.nonNull;
 
 public class Receptionist implements Processor<State> {

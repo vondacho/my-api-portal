@@ -2,12 +2,7 @@ package io.obya.api.onboarding.e2e;
 
 import io.obya.api.onboarding.adapter.in.web.model.Candidate;
 import io.obya.api.onboarding.appl.out.Registry;
-import io.obya.api.onboarding.domain.model.Contract;
-import io.obya.api.onboarding.domain.model.Info;
-import io.obya.api.onboarding.domain.model.Metadata;
-import io.obya.api.onboarding.domain.model.Scorecard;
-import io.obya.api.onboarding.domain.model.Specification;
-import io.obya.api.onboarding.domain.model.SpecificationId;
+import io.obya.api.onboarding.domain.model.*;
 import io.obya.common.util.Try;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -33,6 +28,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -57,8 +53,7 @@ class RegistrationRestAssuredE2ETest {
         RestAssured.port = port;
         RestAssured.basePath = "/";
         // No prior version found → first submission
-        when(registry.infoAt(any(SpecificationId.class))).thenReturn(new Try.Failure<>(List.of()));
-        when(registry.infoAt(any(String.class), any(String.class), any(Semver.class))).thenReturn(new Try.Failure<>(List.of()));
+        when(registry.at(anyString(), anyString(), any(Version.class))).thenReturn(new Try.Failure<>(List.of()));
         // Happy path: registration always succeeds
         when(registry.register(any())).thenReturn(Try.success(new SpecificationId("mock-id")));
     }
@@ -69,7 +64,7 @@ class RegistrationRestAssuredE2ETest {
 
     @Test
     void submit_validOpenApiV30_registersSpecAndReturns201() throws Exception {
-        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
+        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1.yaml");
 
         given()
                 .contentType(ContentType.JSON)
@@ -83,7 +78,7 @@ class RegistrationRestAssuredE2ETest {
                 .body("contract", equalTo("OPENAPI_V30"))
                 .body("info", notNullValue())
                 .body("info.title", equalTo("Petstore API"))
-                .body("info.version", equalTo("1.0.0"))
+                .body("info.version.major", equalTo(1))
                 .body("metadata", notNullValue())
                 .body("metadata.apiName", equalTo("petstore"))
                 .body("metadata.productName", equalTo("platform"))
@@ -93,7 +88,7 @@ class RegistrationRestAssuredE2ETest {
 
     @Test
     void submit_validAsyncApiV30_registersSpecAndReturns201() throws Exception {
-        URI specUri = specFileUri("e2e/asyncapi_v30_notification_v1_0_0.yaml");
+        URI specUri = specFileUri("e2e/asyncapi_v30_notification_v1.yaml");
 
         given()
                 .contentType(ContentType.JSON)
@@ -135,7 +130,7 @@ class RegistrationRestAssuredE2ETest {
     void submit_registryFails_returnsValidWithoutId() throws Exception {
         when(registry.register(any())).thenReturn(new Try.Failure<>(List.of()));
 
-        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
+        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1.yaml");
 
         given()
                 .contentType(ContentType.JSON)
@@ -193,19 +188,21 @@ class RegistrationRestAssuredE2ETest {
     @Test
     void upgrade_withExistingSpec_autoIncrementsVersionAndReturns201() throws Exception {
         Specification existing = new Specification(
-                new Info("Petstore API", "A sample API.", Semver.parse("1.0.0")),
+                new Info("Petstore API", "A sample API.", Version.from("v1")),
                 Contract.from(Contract.Version.OPENAPI_V30),
-                new Metadata("petstore", "petstore", "platform", null, null),
+                new Metadata("petstore",
+                        Revision.from("1.0.0"),
+                        "petstore", "platform",
+                        null, null),
                 Scorecard.undefined(),
                 "",
                 List.of(),
                 new SpecificationId("mock-id"));
 
-        when(registry.infoAt(any(SpecificationId.class))).thenReturn(Try.success(existing));
-        when(registry.infoAt(any(), any(), any())).thenReturn(Try.success(existing));
+        when(registry.at(anyString(), anyString(), any(Version.class))).thenReturn(Try.success(existing));
         when(registry.register(any())).thenReturn(Try.success(new SpecificationId("upgrade-id")));
 
-        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_0_0.yaml");
+        URI specUri = specFileUri("e2e/openapi_v30_petstore_v1_1_0_0.yaml");
 
         given()
                 .contentType(ContentType.JSON)
@@ -217,9 +214,9 @@ class RegistrationRestAssuredE2ETest {
                 .body("id", equalTo("upgrade-id"))
                 .body("status", equalTo("REGISTERED"))
                 .body("contract", equalTo("OPENAPI_V30"))
-                // Spec version 1.0.0 == existing 1.0.0 → auto-patch to 1.0.1, warning attached
-                .body("info.version", equalTo("1.0.1"))
-                .body("violations.code", hasItem("VERSION_AUTO_INCREMENTED"));
+                .body("info.version.major", equalTo(1))
+                .body("metadata.apiRevision.semver", equalTo("1.0.1"))
+                .body("violations.code", hasItem("REVISION_AUTO_INCREMENTED"));
     }
 
 

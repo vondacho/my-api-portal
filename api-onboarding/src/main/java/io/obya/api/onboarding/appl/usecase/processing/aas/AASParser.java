@@ -1,22 +1,25 @@
 package io.obya.api.onboarding.appl.usecase.processing.aas;
 
 import io.obya.api.onboarding.appl.usecase.processing.Processor;
+import io.obya.api.onboarding.appl.usecase.processing.Validator;
 import io.obya.api.onboarding.appl.usecase.processing.reader.URIReader;
 import io.obya.api.onboarding.appl.usecase.workflow.State;
 import io.obya.api.onboarding.domain.model.Info;
 import io.obya.api.onboarding.domain.model.Metadata;
+import io.obya.api.onboarding.domain.model.Revision;
+import io.obya.api.onboarding.domain.model.Version;
 import io.obya.common.util.Try;
-import org.semver4j.Semver;
 
 import java.io.IOException;
 import java.net.URI;
 
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.*;
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.VERSION_NOT_COMPLIANT;
+import static io.obya.api.onboarding.domain.model.Violation.Code.*;
+import static io.obya.api.onboarding.domain.model.Violation.Code.MALFORMED_VERSION;
 import static io.obya.api.onboarding.appl.usecase.processing.Validator.*;
 import static io.obya.api.onboarding.appl.usecase.processing.reader.URIReader.readerFor;
 import static io.obya.api.onboarding.domain.model.Metadata.*;
 import static io.obya.api.onboarding.domain.model.Metadata.META_PRODUCT_NAME_KEY;
+import static java.util.Optional.ofNullable;
 
 abstract class AASParser<M> implements Processor<State> {
 
@@ -59,20 +62,15 @@ abstract class AASParser<M> implements Processor<State> {
     }
 
     protected Try<State> setInfo(State state, M model) {
-        Semver version = semver(nonNull(getVersion(model), MISSING_DATA.failure("info.version")),
-                VERSION_NOT_COMPLIANT.failure("info.version"));
-
-        final Try<Info> info = Try.success(new Info(
+        return Try.success(new Info(
                         getTitle(model),
                         getDescription(model),
-                        version)
+                        Version.from(getVersion(model)))
                 )
-                .filter(i -> nonEmpty(i::title), MISSING_DATA.failure("info.title"))
-                .filter(i -> nonEmpty(i::description), MISSING_DATA.failure("info.description"));
-
-        return info.hasExceptions() ?
-                info.flatMap(_ -> Try.failure(PARSING_FAILED.failure(state.source(), "state.info").get())) :
-                info.map(state::info);
+                .filter(i -> nonEmpty(i::title), MISSING_DATA.failure("info.title"), true)
+                .filter(i -> nonEmpty(i::description), MISSING_DATA.failure("info.description"), true)
+                .filter(i -> nonNull(i::version), MISSING_DATA.failure("info.version"), true)
+                .map(state::info);
     }
 
     protected abstract String getTitle(M model);
@@ -80,26 +78,26 @@ abstract class AASParser<M> implements Processor<State> {
     protected abstract String getVersion(M model);
 
     protected Try<State> setMetadata(State state, M model) {
-        Semver componentVersion = getComponentVersion(model) == null ? null :
-                semver(getComponentVersion(model), VERSION_NOT_COMPLIANT.failure(META_COMPONENT_VERSION_KEY));
-
-        final Try<Metadata> metadata = Try.success(new Metadata(
+        return Try.success(new Metadata(
                         getName(model),
+                        ofNullable(getRevision(model))
+                                .map(s -> Revision.from(s, MALFORMED_REVISION.failure(META_API_REVISION_KEY, "semver")))
+                                .orElse(null),
                         getBundleName(model),
                         getProductName(model),
                         getComponentName(model),
-                        componentVersion
+                        ofNullable(getComponentVersion(model))
+                                .map(s -> Revision.from(s, MALFORMED_REVISION.failure(META_COMPONENT_VERSION_KEY, "semver")))
+                                .orElse(null)
                 ))
-                .filter(m -> nonEmpty(m::apiName), MISSING_DATA.failure(META_API_NAME_KEY))
-                .filter(m -> nonEmpty(m::bundleName), MISSING_DATA.failure(META_BUNDLE_NAME_KEY))
-                .filter(m -> nonEmpty(m::productName), MISSING_DATA.failure(META_PRODUCT_NAME_KEY));
-
-        return metadata.hasExceptions() ?
-                metadata.flatMap(_ -> Try.failure(PARSING_FAILED.failure(state.source(), "state.metadata").get())) :
-                metadata.map(state::metadata);
+                .filter(m -> nonEmpty(m::apiName), MISSING_DATA.failure(META_API_NAME_KEY), true)
+                .filter(m -> nonEmpty(m::productName), MISSING_DATA.failure(META_PRODUCT_NAME_KEY), true)
+                .filter(m -> nonEmpty(m::bundleName), MISSING_DATA.failure(META_BUNDLE_NAME_KEY), true)
+                .map(state::metadata);
     }
 
     protected abstract String getName(M model);
+    protected abstract String getRevision(M model);
     protected abstract String getBundleName(M model);
     protected abstract String getProductName(M model);
     protected abstract String getComponentName(M model);

@@ -1,6 +1,6 @@
 package io.obya.api.onboarding.appl.usecase.workflow;
 
-import io.obya.api.onboarding.appl.usecase.model.Status;
+import io.obya.api.onboarding.domain.model.Status;
 import io.obya.api.onboarding.domain.model.*;
 import lombok.AccessLevel;
 import lombok.Data;

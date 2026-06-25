@@ -8,7 +8,7 @@ import io.obya.common.util.Try;
 import java.net.URI;
 import java.util.List;
 
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.DEPENDENCY_NOT_AVAILABLE;
+import static io.obya.api.onboarding.domain.model.Violation.Code.DEPENDENCY_NOT_AVAILABLE;
 
 public class SpectralRestAdapter implements ScorerDelegate {
 

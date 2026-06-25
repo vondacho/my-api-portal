@@ -1,7 +1,7 @@
 package io.obya.api.onboarding.e2e;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import io.obya.api.onboarding.appl.usecase.model.Status;
+import io.obya.api.onboarding.domain.model.Status;
 import io.obya.api.onboarding.adapter.in.web.model.Candidate;
 import io.obya.api.onboarding.adapter.in.web.model.CandidateProcessed;
 import org.junit.jupiter.api.BeforeEach;

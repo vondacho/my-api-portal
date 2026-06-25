@@ -3,14 +3,11 @@ package io.obya.api.onboarding.appl.usecase.processing;
 import org.semver4j.Semver;
 
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public interface Validator {
-
-    static <T> boolean nonNull(T value) {
-        return value != null;
-    }
 
     static <T> boolean nonNull(Supplier<T> value) {
         return value.get() != null;
@@ -25,7 +22,7 @@ public interface Validator {
     }
 
     static boolean nonEmpty(String value) {
-        return !(value == null || value.isEmpty());
+        return value != null && !value.isEmpty();
     }
 
     static boolean nonEmpty(Supplier<String> value) {

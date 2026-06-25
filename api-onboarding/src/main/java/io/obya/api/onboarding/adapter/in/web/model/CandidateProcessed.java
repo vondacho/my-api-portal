@@ -1,7 +1,7 @@
 package io.obya.api.onboarding.adapter.in.web.model;
 
-import io.obya.api.onboarding.appl.usecase.model.Status;
-import io.obya.api.onboarding.appl.usecase.model.Violation;
+import io.obya.api.onboarding.domain.model.Status;
+import io.obya.api.onboarding.domain.model.Violation;
 import io.obya.api.onboarding.appl.usecase.workflow.State;
 import io.obya.api.onboarding.domain.model.Contract;
 import io.obya.api.onboarding.domain.model.Info;

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.obya.api.onboarding.appl.usecase.processing.reader.URIReader;
+import io.obya.api.onboarding.domain.model.Version;
 
 import static io.obya.api.onboarding.domain.model.Metadata.*;
 
@@ -40,6 +41,11 @@ public class AASV30Parser extends AASParser<AsyncAPI> {
     @Override
     protected String getName(AsyncAPI model) {
         return (String) model.getInfo().getExtensionFields().get(META_API_NAME_KEY);
+    }
+
+    @Override
+    protected String getRevision(AsyncAPI model) {
+        return (String) model.getInfo().getExtensionFields().get(META_API_REVISION_KEY);
     }
 
     @Override

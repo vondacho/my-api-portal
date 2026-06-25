@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.*;
+import static io.obya.api.onboarding.domain.model.Violation.Code.*;
 import static io.obya.api.onboarding.appl.usecase.processing.Validator.nonNull;
 import static io.obya.api.onboarding.appl.usecase.processing.reader.URIReader.readerFor;
 

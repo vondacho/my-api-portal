@@ -2,8 +2,9 @@ openapi: 3.0.3
 info:
   title: Petstore API
   description: A valid API whose mocked score falls under the minimal acceptance threshold.
-  version: 1.0.0
+  version: v1
   x-api-name: petstore
+  x-api-version: 1.0.0
   x-bundle-name: petstore
   x-product-name: platform
 servers:

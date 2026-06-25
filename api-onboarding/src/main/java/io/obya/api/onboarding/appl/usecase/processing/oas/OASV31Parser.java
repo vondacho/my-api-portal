@@ -37,6 +37,11 @@ public class OASV31Parser extends OASParser<OpenApi> {
     }
 
     @Override
+    protected String getRevision(OpenApi openApi) {
+        return (String) openApi.getInfo().getExtensions().get(META_API_REVISION_KEY);
+    }
+
+    @Override
     protected String getBundleName(OpenApi openApi) {
         return (String) openApi.getInfo().getExtensions().get(META_BUNDLE_NAME_KEY);
     }

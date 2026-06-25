@@ -3,8 +3,7 @@ package io.obya.api.onboarding.appl.usecase.processing.oas;
 import io.obya.api.onboarding.appl.usecase.processing.Processor;
 import io.obya.api.onboarding.appl.usecase.processing.reader.URIReader;
 import io.obya.api.onboarding.appl.usecase.workflow.State;
-import io.obya.api.onboarding.domain.model.Info;
-import io.obya.api.onboarding.domain.model.Metadata;
+import io.obya.api.onboarding.domain.model.*;
 import io.obya.common.util.Try;
 import io.openapiparser.*;
 import io.openapiprocessor.jackson.JacksonConverter;
@@ -16,11 +15,13 @@ import org.semver4j.Semver;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
+import java.net.URISyntaxException;
 
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.*;
+import static io.obya.api.onboarding.domain.model.Violation.Code.*;
 import static io.obya.api.onboarding.appl.usecase.processing.Validator.*;
 import static io.obya.api.onboarding.appl.usecase.processing.reader.URIReader.readerFor;
 import static io.obya.api.onboarding.domain.model.Metadata.*;
+import static java.util.Optional.ofNullable;
 
 abstract class OASParser<M> implements Processor<State> {
 
@@ -68,11 +69,10 @@ abstract class OASParser<M> implements Processor<State> {
     }
 
     protected Try<State> setInfo(State state, M model) {
-        final Semver version = getVersion(model) == null ? null : Semver.coerce(getVersion(model));
         return Try.success(new Info(
                         getTitle(model),
                         getDescription(model),
-                        version)
+                        Version.from(getVersion(model)))
                 )
                 .filter(i -> nonEmpty(i::title), MISSING_DATA.failure("info.title"), true)
                 .filter(i -> nonEmpty(i::description), MISSING_DATA.failure("info.description"), true)
@@ -85,15 +85,17 @@ abstract class OASParser<M> implements Processor<State> {
     protected abstract String getVersion(M model);
 
     protected Try<State> setMetadata(State state, M model) {
-        Semver componentVersion = getComponentVersion(model) == null ? null :
-                semver(getComponentVersion(model), VERSION_NOT_COMPLIANT.failure(META_COMPONENT_VERSION_KEY));
-
         return Try.success(new Metadata(
                         getName(model),
+                        ofNullable(getRevision(model))
+                                .map(s -> Revision.from(s, MALFORMED_REVISION.failure(META_API_REVISION_KEY, "semver")))
+                                .orElse(null),
                         getBundleName(model),
                         getProductName(model),
                         getComponentName(model),
-                        componentVersion
+                        ofNullable(getComponentVersion(model))
+                                .map(s -> Revision.from(s, MALFORMED_REVISION.failure(META_COMPONENT_VERSION_KEY, "semver")))
+                                .orElse(null)
                 ))
                 .filter(m -> nonEmpty(m::apiName), MISSING_DATA.failure(META_API_NAME_KEY), true)
                 .filter(m -> nonEmpty(m::productName), MISSING_DATA.failure(META_PRODUCT_NAME_KEY), true)
@@ -102,6 +104,7 @@ abstract class OASParser<M> implements Processor<State> {
     }
 
     protected abstract String getName(M model);
+    protected abstract String getRevision(M model);
     protected abstract String getBundleName(M model);
     protected abstract String getProductName(M model);
     protected abstract String getComponentName(M model);

@@ -1,6 +1,6 @@
 package io.obya.api.onboarding.adapter.in.web.exception;
 
-import io.obya.api.onboarding.appl.usecase.model.Violation;
+import io.obya.api.onboarding.domain.model.Violation;
 
 import java.util.HashMap;
 import java.util.List;

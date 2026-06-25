@@ -1,4 +1,4 @@
-package io.obya.api.onboarding.appl.usecase.model;
+package io.obya.api.onboarding.domain.model;
 
 public enum Status {
     IMPLEMENTED,

@@ -1,23 +1,34 @@
 package io.obya.api.onboarding.appl.out;
 
+import io.obya.api.onboarding.domain.model.Revision;
 import io.obya.api.onboarding.domain.model.Specification;
 import io.obya.api.onboarding.domain.model.SpecificationId;
+import io.obya.api.onboarding.domain.model.Version;
 import io.obya.common.util.Try;
-import org.semver4j.Semver;
+
+import java.util.List;
 
 public interface Registry {
 
     Try<SpecificationId> register(Specification specification);
 
-    Try<Specification> specificationAt(SpecificationId id, String...attributes);
+    Try<Specification> latestAt(SpecificationId id, String...attributes);
 
-    Try<Specification> specificationAt(String name, String product, Semver version, String...attributes);
+    Try<Specification> latestAt(String name, String productName, Version version, String...attributes);
 
-    default Try<Specification> infoAt(SpecificationId id) {
-        return specificationAt(id, "info", "contract", "metadata");
+    Try<List<Specification>> revisionsAt(String name, String productName, Version version, String...attributes);
+
+    Try<Specification> revisionAt(String name, String productName, Version version, Revision revision, String...attributes);
+
+    default Try<Specification> at(SpecificationId id) {
+        return latestAt(id, "info", "contract", "metadata");
     }
 
-    default Try<Specification> infoAt(String name, String product, Semver version) {
-        return specificationAt(name, product, version, "info", "contract", "metadata");
+    default Try<Specification> at(String name, String productName, Version version) {
+        return latestAt(name, productName, version, "info", "contract", "metadata");
+    }
+
+    default Try<Specification> at(String name, String productName, Version version, Revision revision) {
+        return revisionAt(name, productName, version, revision, "info", "contract", "metadata");
     }
 }

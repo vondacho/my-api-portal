@@ -1,7 +1,7 @@
 package io.obya.api.onboarding.appl.usecase;
 
-import io.obya.api.onboarding.appl.usecase.model.Status;
-import io.obya.api.onboarding.appl.usecase.model.Violation;
+import io.obya.api.onboarding.domain.model.Status;
+import io.obya.api.onboarding.domain.model.Violation;
 import io.obya.api.onboarding.appl.usecase.processing.*;
 import io.obya.api.onboarding.appl.usecase.workflow.Flow;
 import io.obya.api.onboarding.appl.usecase.workflow.State;
@@ -13,7 +13,7 @@ import io.obya.common.util.Try;
 import java.net.URI;
 import java.util.List;
 
-import static io.obya.api.onboarding.appl.usecase.model.Status.SCORED;
+import static io.obya.api.onboarding.domain.model.Status.SCORED;
 
 public class RegistrationService {
 
@@ -25,16 +25,16 @@ public class RegistrationService {
 
     private final Overlayer overlayer;
 
-    private final VersionEnforcer versionEnforcer;
+    private final Revisor revisor;
 
     private final Registry registry;
 
-    public RegistrationService(Receptionist receptionist, Parser parser, Scorer scorer, Overlayer overlayer, VersionEnforcer versionEnforcer, Registry registry) {
+    public RegistrationService(Receptionist receptionist, Parser parser, Scorer scorer, Overlayer overlayer, Revisor revisor, Registry registry) {
         this.receptionist = receptionist;
         this.parser = parser;
         this.scorer = scorer;
         this.overlayer = overlayer;
-        this.versionEnforcer = versionEnforcer;
+        this.revisor = revisor;
         this.registry = registry;
     }
 
@@ -42,7 +42,7 @@ public class RegistrationService {
         final Try<State> scored = Flow.compositeProcessor(
                 receptionist,
                 parser,
-                versionEnforcer,
+                revisor,
                 scorer,
                 overlayer).process(Try.success(new State().source(candidate)));
 

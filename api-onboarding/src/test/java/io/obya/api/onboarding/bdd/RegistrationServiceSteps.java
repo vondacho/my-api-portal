@@ -8,16 +8,8 @@ import io.cucumber.spring.CucumberContextConfiguration;
 import io.obya.api.onboarding.appl.out.Registry;
 import io.obya.api.onboarding.appl.out.ScorerDelegate;
 import io.obya.api.onboarding.appl.usecase.RegistrationService;
-import io.obya.api.onboarding.appl.usecase.model.Status;
-import io.obya.api.onboarding.appl.usecase.model.Violation;
+import io.obya.api.onboarding.domain.model.*;
 import io.obya.api.onboarding.appl.usecase.workflow.State;
-import io.obya.api.onboarding.domain.model.Contract;
-import io.obya.api.onboarding.domain.model.Info;
-import io.obya.api.onboarding.domain.model.Metadata;
-import io.obya.api.onboarding.domain.model.Score;
-import io.obya.api.onboarding.domain.model.Scorecard;
-import io.obya.api.onboarding.domain.model.Specification;
-import io.obya.api.onboarding.domain.model.SpecificationId;
 import io.obya.common.util.Try;
 import org.mockito.ArgumentCaptor;
 import org.semver4j.Semver;
@@ -29,9 +21,9 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.DEPENDENCY_NOT_AVAILABLE;
+import static io.obya.api.onboarding.domain.model.Violation.Code.DEPENDENCY_NOT_AVAILABLE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -61,7 +53,7 @@ public class RegistrationServiceSteps {
     @Before
     public void resetMocks() {
         // Default: registration always succeeds and yields a stable document id.
-        when(registry.register(any())).thenReturn(Try.success(new SpecificationId(REGISTERED_ID)));
+        when(registry.register(any(Specification.class))).thenReturn(Try.success(new SpecificationId(REGISTERED_ID)));
         // Default: scoring succeeds with a good grade.  The fixture flagged as
         // "under_minimal_scoring_threshold" is scored below the acceptable threshold so the
         // corresponding scenario needs no extra Given.
@@ -69,7 +61,7 @@ public class RegistrationServiceSteps {
             URI source = invocation.getArgument(0);
             return Try.success(scorecardFor(source.toString()));
         });
-        when(scorer.score(any(String.class), any(Contract.class))).thenAnswer(invocation -> {
+        when(scorer.score(anyString(), any(Contract.class))).thenAnswer(invocation -> {
             String source = invocation.getArgument(0);
             return Try.success(scorecardFor(source));
         });
@@ -85,16 +77,35 @@ public class RegistrationServiceSteps {
     // Given
     // -------------------------------------------------------------------------
 
+    @Given("the registry holds specification {string} for product {string} at version {string} with revision {string}")
+    public void theRegistryHoldsSpecificationFor(String apiName, String productName, String version, String revision) {
+        final Specification specification = new Specification(
+                new Info("any", "any", Version.from(version)),
+                Contract.from(Contract.Version.OPENAPI_V30),
+                new Metadata(
+                        apiName,
+                        Revision.from(revision),
+                        "any",
+                        productName, null, null),
+                Scorecard.undefined(),
+                "any",
+                List.of(),
+                new SpecificationId(REGISTERED_ID));
+
+        when(registry.at(apiName, productName, Version.from(version)))
+                .thenReturn(Try.success(specification));
+        when(registry.at(apiName, productName, Version.from(version), Revision.from(revision)))
+                .thenReturn(Try.success(specification));
+    }
+
     @Given("the registry holds no prior specification")
     public void theRegistryHoldsNoPriorSpecification() {
-        when(registry.infoAt(any(SpecificationId.class))).thenReturn(new Try.Failure<>(List.of()));
-        when(registry.infoAt(any(String.class), any(String.class), any(Semver.class)))
-                .thenReturn(new Try.Failure<>(List.of()));
+        when(registry.at(anyString(), anyString(), any(Version.class))).thenReturn(new Try.Failure<>(List.of()));
     }
 
     @Given("the registry cannot register specifications")
     public void theRegistryCannotRegisterSpecifications() {
-        when(registry.register(any())).thenReturn(new Try.Failure<>(
+        when(registry.register(any(Specification.class))).thenReturn(new Try.Failure<>(
                 List.of(DEPENDENCY_NOT_AVAILABLE.failure("registry", "unavailable").get())));
     }
 
@@ -102,25 +113,8 @@ public class RegistrationServiceSteps {
     public void theScorerCannotScoreSpecifications() {
         when(scorer.score(any(URI.class), any(Contract.class))).thenReturn(new Try.Failure<>(
                 List.of(DEPENDENCY_NOT_AVAILABLE.failure("scorer", "unavailable").get())));
-        when(scorer.score(any(String.class), any(Contract.class))).thenReturn(new Try.Failure<>(
+        when(scorer.score(anyString(), any(Contract.class))).thenReturn(new Try.Failure<>(
                 List.of(DEPENDENCY_NOT_AVAILABLE.failure("scorer", "unavailable").get())));
-    }
-
-    @Given("the registry contains specification {string} for product {string} with latest version {string}")
-    public void theRegistryContainsLatestVersion(String apiName, String product, String version) {
-        when(registry.infoAt(any(String.class), any(String.class), any(Semver.class)))
-                .thenReturn(Try.success(existingSpecification(apiName, product, version)));
-    }
-
-    private Specification existingSpecification(String apiName, String product, String version) {
-        return new Specification(
-                new Info(apiName, "An existing specification.", Semver.parse(version)),
-                Contract.from(Contract.Version.OPENAPI_V30),
-                new Metadata(apiName, apiName, product, null, null),
-                Scorecard.undefined(),
-                "",
-                List.of(),
-                new SpecificationId(REGISTERED_ID));
     }
 
     // -------------------------------------------------------------------------
@@ -178,7 +172,12 @@ public class RegistrationServiceSteps {
 
     @Then("the specification version is {string}")
     public void theSpecificationVersionIs(String version) {
-        assertThat(result.getOrThrow().info().version().getVersion()).isEqualTo(version);
+        assertThat(result.getOrThrow().info().version()).isEqualTo(Version.from(version));
+    }
+
+    @Then("the revision is {string}")
+    public void theRevisionIs(String revision) {
+        assertThat(result.getOrThrow().metadata().apiRevision()).isEqualTo(Revision.from(revision));
     }
 
     @Then("the contract version is {string}")
@@ -221,13 +220,24 @@ public class RegistrationServiceSteps {
     }
 
     @Then("the registry contains specification {string} for product {string} at version {string}")
-    public void theRegistryContainsSpecificationFor(String apiName, String product, String version) {
+    public void theRegistryContainsSpecificationFor(String apiName, String productName, String version) {
         ArgumentCaptor<Specification> captor = ArgumentCaptor.forClass(Specification.class);
         verify(registry).register(captor.capture());
         Specification persisted = captor.getValue();
         assertThat(persisted.metadata().apiName()).isEqualTo(apiName);
-        assertThat(persisted.metadata().productName()).isEqualTo(product);
-        assertThat(persisted.info().version().getVersion()).isEqualTo(version);
+        assertThat(persisted.metadata().productName()).isEqualTo(productName);
+        assertThat(persisted.info().version()).isEqualTo(Version.from(version));
+    }
+
+    @Then("the registry contains specification {string} for product {string} at version {string} with revision {string}")
+    public void theRegistryContainsSpecificationFor(String apiName, String productName, String version, String revision) {
+        ArgumentCaptor<Specification> captor = ArgumentCaptor.forClass(Specification.class);
+        verify(registry).register(captor.capture());
+        Specification persisted = captor.getValue();
+        assertThat(persisted.metadata().apiName()).isEqualTo(apiName);
+        assertThat(persisted.metadata().productName()).isEqualTo(productName);
+        assertThat(persisted.info().version()).isEqualTo(Version.from(version));
+        assertThat(persisted.metadata().apiRevision()).isEqualTo(Revision.from(revision));
     }
 
     // -------------------------------------------------------------------------
@@ -271,4 +281,5 @@ public class RegistrationServiceSteps {
     private URI uriOf(String classpathResource) throws Exception {
         return getClass().getClassLoader().getResource(classpathResource).toURI();
     }
+
 }

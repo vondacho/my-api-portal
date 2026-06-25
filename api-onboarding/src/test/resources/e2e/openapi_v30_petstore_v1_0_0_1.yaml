@@ -2,8 +2,9 @@ openapi: 3.0.3
 info:
   title: Petstore API
   description: A sample API for end-to-end test fixtures.
-  version: 1.0.0
+  version: v1
   x-api-name: petstore
+  x-api-revision: 0.0.1
   x-bundle-name: petstore
   x-product-name: platform
 servers:

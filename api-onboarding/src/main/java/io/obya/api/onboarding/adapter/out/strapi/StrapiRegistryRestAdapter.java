@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static io.obya.api.onboarding.appl.usecase.model.Violation.Code.RESOURCE_NOT_FOUND;
+import static io.obya.api.onboarding.domain.model.Violation.Code.RESOURCE_NOT_FOUND;
 import static java.util.Objects.nonNull;
 
 public class StrapiRegistryRestAdapter implements Registry {
@@ -42,7 +42,7 @@ public class StrapiRegistryRestAdapter implements Registry {
                                         specification.metadata().productName(),
                                         specification.info().version())))
                         .name(specification.metadata().apiName())
-                        .version(specification.info().version().getVersion())
+                        .version(specification.info().version().format())
                         .productName(specification.metadata().productName())
                         .bundleName(specification.metadata().bundleName())
                         .contract(SpecificationPostSpecificationsRequestData.ContractEnum.valueOf(
@@ -64,7 +64,7 @@ public class StrapiRegistryRestAdapter implements Registry {
                                         specification.metadata().productName(),
                                         specification.info().version())))
                         .name(specification.metadata().apiName())
-                        .version(specification.info().version().getVersion())
+                        .version(specification.info().version().format())
                         .productName(specification.metadata().productName())
                         .bundleName(specification.metadata().bundleName())
                         .contract(SpecificationPutSpecificationsByIdRequestData.ContractEnum.valueOf(
@@ -78,31 +78,26 @@ public class StrapiRegistryRestAdapter implements Registry {
     }
 
     @Override
-    public Try<Specification> specificationAt(SpecificationId id, String...attributes) {
-        return execute(() -> specificationApi.specificationGetSpecificationsById(id.id()),
-                body -> new Specification(
-                        new Info(
-                                "title",
-                                "description",
-                                Semver.parse(body.getData().getVersion())),
-                        Contract.from(Contract.Version.valueOf(body.getData().getContract().name())),
-                        new Metadata(
-                                body.getData().getName(),
-                                body.getData().getBundleName(),
-                                body.getData().getProductName(),
-                                Metadata.META_COMPONENT_NAME_KEY,
-                                null),
-                        Scorecard.undefined(), //TODO
-                        body.getData().getBody().toString(),
-                        Collections.emptyList(), //TODO
-                        id)
-                );
+    public Try<Specification> latestAt(SpecificationId id, String... attributes) {
+        return new Try.Failure<>(List.of(RESOURCE_NOT_FOUND.failure( "Specification", id).get()));
     }
 
     @Override
-    public Try<Specification> specificationAt(String name, String product, Semver version, String... attributes) {
+    public Try<Specification> latestAt(String name, String productName, Version version, String... attributes) {
         return new Try.Failure<>(List.of(RESOURCE_NOT_FOUND.failure( "Specification",
-                "[%s-%s-%s]".formatted(name, product, version)).get()));
+                "[%s-%s-%s]".formatted(name, productName, version)).get()));
+    }
+
+    @Override
+    public Try<List<Specification>> revisionsAt(String name, String productName, Version version, String... attributes) {
+        return new Try.Failure<>(List.of(RESOURCE_NOT_FOUND.failure( "Specifications",
+                "[%s-%s-%s]".formatted(name, productName, version)).get()));
+    }
+
+    @Override
+    public Try<Specification> revisionAt(String name, String productName, Version version, Revision revision, String... attributes) {
+        return new Try.Failure<>(List.of(RESOURCE_NOT_FOUND.failure( "Specification",
+                "[%s-%s-%s-%s]".formatted(name, productName, version, revision)).get()));
     }
 
     private static <T,R> Try<R> execute(Supplier<ResponseEntity<T>> request, Function<T, R> packaging) {

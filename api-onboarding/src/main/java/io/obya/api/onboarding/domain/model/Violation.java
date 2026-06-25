@@ -1,4 +1,4 @@
-package io.obya.api.onboarding.appl.usecase.model;
+package io.obya.api.onboarding.domain.model;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -16,8 +16,10 @@ public record Violation(String detail, Code code, Severity severity) implements 
         OVERLAYING_FAILED("Overlaying by given uri [%s] failed [%s].", Severity.MINOR),
         PROCESSING_FAILED("Processing of given uri [%s] failed [%s].", Severity.MAJOR),
         MISSING_DATA("A required data is missing or empty [%s].", Severity.MAJOR),
-        VERSION_NOT_COMPLIANT("The given version is not semver compliant [%s].", Severity.MAJOR),
-        VERSION_AUTO_INCREMENTED("The version [%s] has been incremented to next patch [%s].", Severity.MINOR),
+        MALFORMED_VERSION("The version [%s] is not compliant [%s].", Severity.MAJOR),
+        MALFORMED_REVISION("The revision [%s] is not compliant [%s].", Severity.MAJOR),
+        REVISION_NOT_ALIGNED("The revision [%s] is not aligned with version [%s].", Severity.MINOR),
+        REVISION_AUTO_INCREMENTED("The revision [%s] has been incremented to next patch [%s].", Severity.MINOR),
         RESOURCE_NOT_FOUND("The [%s] resource [%s] does not exist.", Severity.MAJOR),
         LINTING_RULE_VIOLATED("A linting rule must be respected [%s].", Severity.MAJOR),
         LINTING_RULE_TOLERATED("A linting rule should be respected [%s].", Severity.MINOR),

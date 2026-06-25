@@ -1,6 +1,6 @@
 package io.obya.api.onboarding.appl.usecase;
 
-import io.obya.api.onboarding.appl.usecase.model.Violation;
+import io.obya.api.onboarding.domain.model.Violation;
 import lombok.Getter;
 
 import java.util.List;
