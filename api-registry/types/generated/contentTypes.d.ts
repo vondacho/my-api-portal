@@ -454,6 +454,8 @@ export interface ApiSpecificationSpecification
   attributes: {
     body: Schema.Attribute.JSON & Schema.Attribute.Required;
     bundleName: Schema.Attribute.String & Schema.Attribute.Required;
+    componentName: Schema.Attribute.String;
+    componentRevision: Schema.Attribute.String;
     contract: Schema.Attribute.Enumeration<
       [
         'OPENAPI_V30',
@@ -481,6 +483,7 @@ export interface ApiSpecificationSpecification
     name: Schema.Attribute.String & Schema.Attribute.Required;
     productName: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
+    revision: Schema.Attribute.String & Schema.Attribute.Required;
     score: Schema.Attribute.JSON;
     specId: Schema.Attribute.UID<''> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;

@@ -21,19 +21,32 @@
       "required": true,
       "unique": false
     },
-    "version": {
-      "type": "string",
-      "required": true,
-      "regex": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
-    },
     "productName": {
       "type": "string",
       "required": true,
       "unique": false
     },
+    "version": {
+      "type": "string",
+      "required": true,
+      "regex": "^v(0|[1-9]\\d*)$"
+    },
+    "revision": {
+      "type": "string",
+      "required": true,
+      "unique": false,
+      "regex": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
     "bundleName": {
       "type": "string",
       "required": true
+    },
+    "componentName": {
+      "type": "string"
+    },
+    "componentRevision": {
+      "type": "string",
+      "regex": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
     },
     "contract": {
       "type": "enumeration",
