@@ -1,3 +1,7 @@
+### Get
+GET http://localhost:1337/api/specifications
+
+
 ### Post short specification to strapi
 POST http://localhost:1337/api/specifications
 Content-Type: application/json

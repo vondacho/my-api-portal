@@ -6,22 +6,18 @@ import io.obya.api.onboarding.domain.model.SpecificationId;
 import io.obya.api.onboarding.domain.model.Version;
 import io.obya.common.util.Try;
 
-import java.util.List;
-
 public interface Registry {
 
     Try<SpecificationId> register(Specification specification);
 
-    Try<Specification> latestAt(SpecificationId id, String...attributes);
+    Try<Specification> at(SpecificationId id, String...attributes);
 
     Try<Specification> latestAt(String name, String productName, Version version, String...attributes);
-
-    Try<List<Specification>> revisionsAt(String name, String productName, Version version, String...attributes);
 
     Try<Specification> revisionAt(String name, String productName, Version version, Revision revision, String...attributes);
 
     default Try<Specification> at(SpecificationId id) {
-        return latestAt(id, "info", "contract", "metadata");
+        return at(id, "info", "contract", "metadata");
     }
 
     default Try<Specification> at(String name, String productName, Version version) {

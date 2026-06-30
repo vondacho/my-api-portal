@@ -29,19 +29,13 @@ public class RegistryConfig {
             }
 
             @Override
-            public Try<Specification> latestAt(SpecificationId id, String... attributes) {
+            public Try<Specification> at(SpecificationId id, String... attributes) {
                 return new Try.Failure<>(List.of(RESOURCE_NOT_FOUND.failure( "Specification", id).get()));
             }
 
             @Override
             public Try<Specification> latestAt(String name, String productName, Version version, String... attributes) {
                 return new Try.Failure<>(List.of(RESOURCE_NOT_FOUND.failure( "Specification",
-                        "[%s-%s-%s]".formatted(name, productName, version)).get()));
-            }
-
-            @Override
-            public Try<List<Specification>> revisionsAt(String name, String productName, Version version, String... attributes) {
-                return new Try.Failure<>(List.of(RESOURCE_NOT_FOUND.failure( "Specifications",
                         "[%s-%s-%s]".formatted(name, productName, version)).get()));
             }
 

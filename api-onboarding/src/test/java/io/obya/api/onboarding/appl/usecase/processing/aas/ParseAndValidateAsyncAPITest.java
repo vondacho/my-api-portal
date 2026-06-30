@@ -1,4 +1,4 @@
-package io.obya.api.onboarding.appl.processing.aas;
+package io.obya.api.onboarding.appl.usecase.processing.aas;
 
 import com.asyncapi.v3._0_0.model.AsyncAPI;
 import com.fasterxml.jackson.annotation.JsonInclude;

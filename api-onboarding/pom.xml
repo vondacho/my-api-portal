@@ -252,7 +252,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/openapi/strapi_specification_v4.json</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi/strapi_specification_v5.json</inputSpec>
                             <generatorName>spring</generatorName>
                             <apiPackage>io.obya.api.onboarding.adapter.out.strapi.api</apiPackage>
                             <modelPackage>io.obya.api.onboarding.adapter.out.strapi.model</modelPackage>

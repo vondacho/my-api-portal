@@ -1,0 +1,1392 @@
+{
+  "openapi": "3.1.0",
+  "x-powered-by": "strapi",
+  "x-strapi-version": "5.49.0",
+  "info": {
+    "title": "api-registry",
+    "description": "API documentation for api-registry v0.1.0",
+    "version": "0.1.0"
+  },
+  "servers": [
+    { "url": "http://localhost:1337/api" }
+  ],
+  "paths": {
+    "/specifications": {
+      "get": {
+        "operationId": "specification/get/specifications",
+        "parameters": [
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "readOnly": true,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "specId",
+                  "name",
+                  "productName",
+                  "version",
+                  "revision",
+                  "bundleName",
+                  "componentName",
+                  "componentRevision",
+                  "contract",
+                  "body",
+                  "score",
+                  "violations",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "propertyNames": {
+                "type": "string",
+                "enum": [
+                  "specId",
+                  "name",
+                  "productName",
+                  "version",
+                  "revision",
+                  "bundleName",
+                  "componentName",
+                  "componentRevision",
+                  "contract",
+                  "body",
+                  "score",
+                  "violations",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              },
+              "additionalProperties": {}
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "_q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string"
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "specId",
+                  "name",
+                  "productName",
+                  "version",
+                  "revision",
+                  "bundleName",
+                  "componentName",
+                  "componentRevision",
+                  "contract",
+                  "body",
+                  "score",
+                  "violations",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "readOnly": true,
+              "type": "string",
+              "enum": []
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string",
+              "enum": [
+                "draft",
+                "published"
+              ]
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "publicationFilter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string",
+              "enum": [
+                "never-published",
+                "has-published-version",
+                "modified",
+                "unmodified",
+                "never-published-document",
+                "has-published-version-document",
+                "published-without-draft",
+                "published-with-draft"
+              ]
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "hasPublishedVersion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "boolean"
+            },
+            "x-strapi-serialize": "querystring"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "documentId": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "specId": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "productName": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          },
+                          "revision": {
+                            "type": "string"
+                          },
+                          "bundleName": {
+                            "type": "string"
+                          },
+                          "componentName": {
+                            "type": "string"
+                          },
+                          "componentRevision": {
+                            "type": "string"
+                          },
+                          "contract": {
+                            "type": "string",
+                            "enum": [
+                              "OPENAPI_V30",
+                              "OPENAPI_V31",
+                              "OPENAPI_V32",
+                              "ASYNCAPI_V2",
+                              "ASYNCAPI_V3",
+                              "GRAPHQLS",
+                              "WSDL_V11",
+                              "WSDL_V20",
+                              "OVERLAY_V10",
+                              "OVERLAY_V11"
+                            ]
+                          },
+                          "body": {},
+                          "score": {},
+                          "violations": {},
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "publishedAt": {
+                            "default": "2026-06-26T03:44:53.350Z",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "documentId",
+                          "id",
+                          "specId",
+                          "name",
+                          "productName",
+                          "version",
+                          "revision",
+                          "bundleName",
+                          "contract",
+                          "body",
+                          "publishedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "specification"
+        ]
+      },
+      "post": {
+        "operationId": "specification/post/specifications",
+        "parameters": [
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "readOnly": true,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "specId",
+                  "name",
+                  "productName",
+                  "version",
+                  "revision",
+                  "bundleName",
+                  "componentName",
+                  "componentRevision",
+                  "contract",
+                  "body",
+                  "score",
+                  "violations",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "readOnly": true,
+              "type": "string",
+              "enum": []
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string",
+              "enum": [
+                "draft",
+                "published"
+              ]
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "publicationFilter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string",
+              "enum": [
+                "never-published",
+                "has-published-version",
+                "modified",
+                "unmodified",
+                "never-published-document",
+                "has-published-version-document",
+                "published-without-draft",
+                "published-with-draft"
+              ]
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "hasPublishedVersion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "boolean"
+            },
+            "x-strapi-serialize": "querystring"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "documentId": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "specId": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "productName": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "revision": {
+                          "type": "string"
+                        },
+                        "bundleName": {
+                          "type": "string"
+                        },
+                        "componentName": {
+                          "type": "string"
+                        },
+                        "componentRevision": {
+                          "type": "string"
+                        },
+                        "contract": {
+                          "type": "string",
+                          "enum": [
+                            "OPENAPI_V30",
+                            "OPENAPI_V31",
+                            "OPENAPI_V32",
+                            "ASYNCAPI_V2",
+                            "ASYNCAPI_V3",
+                            "GRAPHQLS",
+                            "WSDL_V11",
+                            "WSDL_V20",
+                            "OVERLAY_V10",
+                            "OVERLAY_V11"
+                          ]
+                        },
+                        "body": {},
+                        "score": {},
+                        "violations": {},
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "publishedAt": {
+                          "default": "2026-06-26T03:44:53.362Z",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "documentId",
+                        "id",
+                        "specId",
+                        "name",
+                        "productName",
+                        "version",
+                        "revision",
+                        "bundleName",
+                        "contract",
+                        "body",
+                        "publishedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "specification"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "specId": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "productName": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "revision": {
+                        "type": "string"
+                      },
+                      "bundleName": {
+                        "type": "string"
+                      },
+                      "componentName": {
+                        "type": "string"
+                      },
+                      "componentRevision": {
+                        "type": "string"
+                      },
+                      "contract": {
+                        "type": "string",
+                        "enum": [
+                          "OPENAPI_V30",
+                          "OPENAPI_V31",
+                          "OPENAPI_V32",
+                          "ASYNCAPI_V2",
+                          "ASYNCAPI_V3",
+                          "GRAPHQLS",
+                          "WSDL_V11",
+                          "WSDL_V20",
+                          "OVERLAY_V10",
+                          "OVERLAY_V11"
+                        ]
+                      },
+                      "body": {},
+                      "score": {},
+                      "violations": {},
+                      "publishedAt": {
+                        "default": "2026-06-26T03:44:53.715Z",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "specId",
+                      "name",
+                      "productName",
+                      "version",
+                      "revision",
+                      "bundleName",
+                      "contract",
+                      "body",
+                      "publishedAt"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/specifications/{id}": {
+      "get": {
+        "operationId": "specification/get/specifications_by_id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "readOnly": true,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "specId",
+                  "name",
+                  "productName",
+                  "version",
+                  "revision",
+                  "bundleName",
+                  "componentName",
+                  "componentRevision",
+                  "contract",
+                  "body",
+                  "score",
+                  "violations",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "readOnly": true,
+              "type": "string",
+              "enum": []
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "propertyNames": {
+                "type": "string",
+                "enum": [
+                  "specId",
+                  "name",
+                  "productName",
+                  "version",
+                  "revision",
+                  "bundleName",
+                  "componentName",
+                  "componentRevision",
+                  "contract",
+                  "body",
+                  "score",
+                  "violations",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              },
+              "additionalProperties": {}
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "specId",
+                  "name",
+                  "productName",
+                  "version",
+                  "revision",
+                  "bundleName",
+                  "componentName",
+                  "componentRevision",
+                  "contract",
+                  "body",
+                  "score",
+                  "violations",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string",
+              "enum": [
+                "draft",
+                "published"
+              ]
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "publicationFilter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string",
+              "enum": [
+                "never-published",
+                "has-published-version",
+                "modified",
+                "unmodified",
+                "never-published-document",
+                "has-published-version-document",
+                "published-without-draft",
+                "published-with-draft"
+              ]
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "hasPublishedVersion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "boolean"
+            },
+            "x-strapi-serialize": "querystring"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "documentId": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "specId": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "productName": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "revision": {
+                          "type": "string"
+                        },
+                        "bundleName": {
+                          "type": "string"
+                        },
+                        "componentName": {
+                          "type": "string"
+                        },
+                        "componentRevision": {
+                          "type": "string"
+                        },
+                        "contract": {
+                          "type": "string",
+                          "enum": [
+                            "OPENAPI_V30",
+                            "OPENAPI_V31",
+                            "OPENAPI_V32",
+                            "ASYNCAPI_V2",
+                            "ASYNCAPI_V3",
+                            "GRAPHQLS",
+                            "WSDL_V11",
+                            "WSDL_V20",
+                            "OVERLAY_V10",
+                            "OVERLAY_V11"
+                          ]
+                        },
+                        "body": {},
+                        "score": {},
+                        "violations": {},
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "publishedAt": {
+                          "default": "2026-06-26T03:44:53.356Z",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "documentId",
+                        "id",
+                        "specId",
+                        "name",
+                        "productName",
+                        "version",
+                        "revision",
+                        "bundleName",
+                        "contract",
+                        "body",
+                        "publishedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "specification"
+        ]
+      },
+      "put": {
+        "operationId": "specification/put/specifications_by_id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "readOnly": true,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "specId",
+                  "name",
+                  "productName",
+                  "version",
+                  "revision",
+                  "bundleName",
+                  "componentName",
+                  "componentRevision",
+                  "contract",
+                  "body",
+                  "score",
+                  "violations",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "readOnly": true,
+              "type": "string",
+              "enum": []
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string",
+              "enum": [
+                "draft",
+                "published"
+              ]
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "publicationFilter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string",
+              "enum": [
+                "never-published",
+                "has-published-version",
+                "modified",
+                "unmodified",
+                "never-published-document",
+                "has-published-version-document",
+                "published-without-draft",
+                "published-with-draft"
+              ]
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "hasPublishedVersion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "boolean"
+            },
+            "x-strapi-serialize": "querystring"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "documentId": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "specId": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "productName": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "revision": {
+                          "type": "string"
+                        },
+                        "bundleName": {
+                          "type": "string"
+                        },
+                        "componentName": {
+                          "type": "string"
+                        },
+                        "componentRevision": {
+                          "type": "string"
+                        },
+                        "contract": {
+                          "type": "string",
+                          "enum": [
+                            "OPENAPI_V30",
+                            "OPENAPI_V31",
+                            "OPENAPI_V32",
+                            "ASYNCAPI_V2",
+                            "ASYNCAPI_V3",
+                            "GRAPHQLS",
+                            "WSDL_V11",
+                            "WSDL_V20",
+                            "OVERLAY_V10",
+                            "OVERLAY_V11"
+                          ]
+                        },
+                        "body": {},
+                        "score": {},
+                        "violations": {},
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "publishedAt": {
+                          "default": "2026-06-26T03:44:53.373Z",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "documentId",
+                        "id",
+                        "specId",
+                        "name",
+                        "productName",
+                        "version",
+                        "revision",
+                        "bundleName",
+                        "contract",
+                        "body",
+                        "publishedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "specification"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "specId": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "productName": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "revision": {
+                        "type": "string"
+                      },
+                      "bundleName": {
+                        "type": "string"
+                      },
+                      "componentName": {
+                        "type": "string"
+                      },
+                      "componentRevision": {
+                        "type": "string"
+                      },
+                      "contract": {
+                        "type": "string",
+                        "enum": [
+                          "OPENAPI_V30",
+                          "OPENAPI_V31",
+                          "OPENAPI_V32",
+                          "ASYNCAPI_V2",
+                          "ASYNCAPI_V3",
+                          "GRAPHQLS",
+                          "WSDL_V11",
+                          "WSDL_V20",
+                          "OVERLAY_V10",
+                          "OVERLAY_V11"
+                        ]
+                      },
+                      "body": {},
+                      "score": {},
+                      "violations": {},
+                      "publishedAt": {
+                        "default": "2026-06-26T03:44:53.369Z",
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "specification/delete/specifications_by_id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "readOnly": true,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "specId",
+                  "name",
+                  "productName",
+                  "version",
+                  "revision",
+                  "bundleName",
+                  "componentName",
+                  "componentRevision",
+                  "contract",
+                  "body",
+                  "score",
+                  "violations",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              }
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "readOnly": true,
+              "type": "string",
+              "enum": []
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "propertyNames": {
+                "type": "string",
+                "enum": [
+                  "specId",
+                  "name",
+                  "productName",
+                  "version",
+                  "revision",
+                  "bundleName",
+                  "componentName",
+                  "componentRevision",
+                  "contract",
+                  "body",
+                  "score",
+                  "violations",
+                  "createdAt",
+                  "updatedAt",
+                  "publishedAt"
+                ]
+              },
+              "additionalProperties": {}
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string",
+              "enum": [
+                "draft",
+                "published"
+              ]
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "publicationFilter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string",
+              "enum": [
+                "never-published",
+                "has-published-version",
+                "modified",
+                "unmodified",
+                "never-published-document",
+                "has-published-version-document",
+                "published-without-draft",
+                "published-with-draft"
+              ]
+            },
+            "x-strapi-serialize": "querystring"
+          },
+          {
+            "name": "hasPublishedVersion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "boolean"
+            },
+            "x-strapi-serialize": "querystring"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "documentId": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "specId": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "productName": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "revision": {
+                          "type": "string"
+                        },
+                        "bundleName": {
+                          "type": "string"
+                        },
+                        "componentName": {
+                          "type": "string"
+                        },
+                        "componentRevision": {
+                          "type": "string"
+                        },
+                        "contract": {
+                          "type": "string",
+                          "enum": [
+                            "OPENAPI_V30",
+                            "OPENAPI_V31",
+                            "OPENAPI_V32",
+                            "ASYNCAPI_V2",
+                            "ASYNCAPI_V3",
+                            "GRAPHQLS",
+                            "WSDL_V11",
+                            "WSDL_V20",
+                            "OVERLAY_V10",
+                            "OVERLAY_V11"
+                          ]
+                        },
+                        "body": {},
+                        "score": {},
+                        "violations": {},
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "publishedAt": {
+                          "default": "2026-06-26T03:44:53.376Z",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "documentId",
+                        "id",
+                        "specId",
+                        "name",
+                        "productName",
+                        "version",
+                        "revision",
+                        "bundleName",
+                        "contract",
+                        "body",
+                        "publishedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "specification"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}

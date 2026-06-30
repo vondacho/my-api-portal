@@ -1,4 +1,4 @@
-package io.obya.api.onboarding.appl.processing.oas;
+package io.obya.api.onboarding.appl.usecase.processing.oas;
 
 import io.openapiparser.*;
 import io.openapiparser.model.v30.OpenApi;

@@ -1,4 +1,4 @@
-package io.obya.api.onboarding.bdd;
+package io.obya.api.onboarding.at;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -14,8 +14,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
  */
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("bdd")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "io.obya.api.onboarding.bdd")
+@SelectClasspathResource("at")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "io.obya.api.onboarding.at")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 public class RunRegistrationCucumberTest {
 }

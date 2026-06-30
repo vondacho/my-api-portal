@@ -1,4 +1,4 @@
-package io.obya.api.onboarding.appl.processing.oai;
+package io.obya.api.onboarding.appl.usecase.processing.oai;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;

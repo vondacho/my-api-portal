@@ -1,4 +1,4 @@
-package io.obya.api.onboarding.bdd;
+package io.obya.api.onboarding.at;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -12,7 +12,6 @@ import io.obya.api.onboarding.domain.model.*;
 import io.obya.api.onboarding.appl.usecase.workflow.State;
 import io.obya.common.util.Try;
 import org.mockito.ArgumentCaptor;
-import org.semver4j.Semver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;

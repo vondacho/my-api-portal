@@ -10,7 +10,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.0
+  version: v1
   x-api-name: booking
   x-bundle-name: booking
   x-product-name: personal-training
