@@ -1,7 +1,6 @@
 package io.obya.api.onboarding.appl.usecase.processing.aas;
 
 import io.obya.api.onboarding.appl.usecase.processing.Processor;
-import io.obya.api.onboarding.appl.usecase.processing.Validator;
 import io.obya.api.onboarding.appl.usecase.processing.reader.URIReader;
 import io.obya.api.onboarding.appl.usecase.workflow.State;
 import io.obya.api.onboarding.domain.model.Info;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.net.URI;
 
 import static io.obya.api.onboarding.domain.model.Violation.Code.*;
-import static io.obya.api.onboarding.domain.model.Violation.Code.MALFORMED_VERSION;
 import static io.obya.api.onboarding.appl.usecase.processing.Validator.*;
 import static io.obya.api.onboarding.appl.usecase.processing.reader.URIReader.readerFor;
 import static io.obya.api.onboarding.domain.model.Metadata.*;
@@ -87,7 +85,7 @@ abstract class AASParser<M> implements Processor<State> {
                         getProductName(model),
                         getComponentName(model),
                         ofNullable(getComponentVersion(model))
-                                .map(s -> Revision.from(s, MALFORMED_REVISION.failure(META_COMPONENT_VERSION_KEY, "semver")))
+                                .map(s -> Revision.from(s, MALFORMED_REVISION.failure(META_COMPONENT_REVISION_KEY, "semver")))
                                 .orElse(null)
                 ))
                 .filter(m -> nonEmpty(m::apiName), MISSING_DATA.failure(META_API_NAME_KEY), true)

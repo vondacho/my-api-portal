@@ -48,7 +48,7 @@ public interface RegistrationApi {
     @Operation(
             operationId = "scoreSpecification",
             summary = "Record a quality score for a specification",
-            description = "Attaches a Scorecard to an existing specification resource. Not part of the published registration_v1 contract.",
+            description = "Attaches a Scorecard to an existing specification resource.",
             tags = {"registrations"}
     )
     @PutMapping("/{id}/score")
@@ -60,7 +60,7 @@ public interface RegistrationApi {
     @Operation(
             operationId = "implementSpecification",
             summary = "Attach an implementation to a specification",
-            description = "Associates a component Implementation with an existing specification resource. Not part of the published registration_v1 contract.",
+            description = "Associates a component Implementation with an existing specification resource.",
             tags = {"registrations"}
     )
     @PutMapping("/{id}/component")
@@ -72,7 +72,7 @@ public interface RegistrationApi {
     @Operation(
             operationId = "overlaySpecification",
             summary = "Apply an overlay to a specification",
-            description = "Accepts a Candidate payload describing an overlay source to be applied to an existing specification resource. Not part of the published registration_v1 contract.",
+            description = "Accepts a Candidate payload describing an overlay source to be applied to an existing specification resource.",
             tags = {"registrations"}
     )
     @PutMapping("/{id}/overlay")
@@ -84,7 +84,7 @@ public interface RegistrationApi {
     @Operation(
             operationId = "getSpecification",
             summary = "Get a specification resource",
-            description = "Returns the current state of a registered specification. Not part of the published registration_v1 contract.",
+            description = "Returns the current state of a registered specification.",
             tags = {"registrations-extended"}
     )
     @GetMapping("/{id}")
@@ -95,7 +95,7 @@ public interface RegistrationApi {
     @Operation(
             operationId = "getSpecificationScore",
             summary = "Get the score summary for a specification",
-            description = "Returns the current score summary for a registered specification. Not part of the published registration_v1 contract.",
+            description = "Returns the current score summary for a registered specification.",
             tags = {"registrations"}
     )
     @GetMapping("/{id}/score")

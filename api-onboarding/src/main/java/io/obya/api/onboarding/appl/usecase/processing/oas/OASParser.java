@@ -10,12 +10,10 @@ import io.openapiprocessor.jackson.JacksonConverter;
 import io.openapiprocessor.jackson.JacksonJsonWriter;
 import io.openapiprocessor.jsonschema.reader.StringReader;
 import io.openapiprocessor.jsonschema.schema.*;
-import org.semver4j.Semver;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import static io.obya.api.onboarding.domain.model.Violation.Code.*;
 import static io.obya.api.onboarding.appl.usecase.processing.Validator.*;
@@ -94,7 +92,7 @@ abstract class OASParser<M> implements Processor<State> {
                         getProductName(model),
                         getComponentName(model),
                         ofNullable(getComponentVersion(model))
-                                .map(s -> Revision.from(s, MALFORMED_REVISION.failure(META_COMPONENT_VERSION_KEY, "semver")))
+                                .map(s -> Revision.from(s, MALFORMED_REVISION.failure(META_COMPONENT_REVISION_KEY, "semver")))
                                 .orElse(null)
                 ))
                 .filter(m -> nonEmpty(m::apiName), MISSING_DATA.failure(META_API_NAME_KEY), true)

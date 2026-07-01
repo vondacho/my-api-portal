@@ -16,6 +16,10 @@ public record Version(int major) {
         return from(s, MALFORMED_VERSION.failure(s, pattern));
     }
 
+    public static Version from(Revision revision) {
+        return new Version(revision.semver().getMajor());
+    }
+
     public static <E extends Exception> Version from(String s, Supplier<E> e) throws E {
         if (matcher.test(s)) return new Version(Integer.parseInt(s.substring(1)));
         throw e.get();

@@ -58,6 +58,6 @@ public class OASV31Parser extends OASParser<OpenApi> {
 
     @Override
     protected String getComponentVersion(OpenApi openApi) {
-        return (String) openApi.getInfo().getExtensions().get(META_COMPONENT_VERSION_KEY);
+        return (String) openApi.getInfo().getExtensions().get(META_COMPONENT_REVISION_KEY);
     }
 }

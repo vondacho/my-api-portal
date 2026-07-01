@@ -65,6 +65,6 @@ public class AASV26Parser extends AASParser<AsyncAPI> {
 
     @Override
     protected String getComponentVersion(AsyncAPI model) {
-        return (String) model.getInfo().getExtensionFields().get(META_COMPONENT_VERSION_KEY);
+        return (String) model.getInfo().getExtensionFields().get(META_COMPONENT_REVISION_KEY);
     }
 }

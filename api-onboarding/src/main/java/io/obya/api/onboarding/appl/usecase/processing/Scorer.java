@@ -20,10 +20,12 @@ public class Scorer implements Processor<State> {
     @Override
     public Try<State> process(Try<State> state) {
         return state
-            .filter(st -> nonNull(st::source), MISSING_DATA.failure( "state.source"), true)
+            .filter(st -> nonNull(st::source) || nonNull(st::body), MISSING_DATA.failure( "state.source"), true)
             .filter(st -> nonNull(st::contract), MISSING_DATA.failure( "state.contract"), true)
             .flatMap(st -> {
-                final Try<Scorecard> scored = delegate.score(st.source(), st.contract());
+                final Try<Scorecard> scored = nonNull(st::source) ?
+                        delegate.score(st.source(), st.contract()) :
+                        delegate.score(st.body().get(), st.contract());
 
                 if (scored.isFailure()) {
                     return scored.recoverWithOther(e ->

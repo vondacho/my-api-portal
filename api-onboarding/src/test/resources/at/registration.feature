@@ -9,123 +9,162 @@ Feature: API specification onboarding
   Scenario: A valid and scored OpenAPI candidate is registered
     When the candidate "e2e/openapi_v30_petstore_v1.yaml" is submitted
     Then the onboarding succeeds
-    And the specification id is "mock-id"
-    And the specification version is "v1"
-    And the contract version is "OPENAPI_V30"
+    And the specification id is spec-123
+    And the specification version is v1
+    And the contract is OPENAPI_V30
     And a scorecard is assigned with global score of 74
-    And the specification status is "REGISTERED"
+    And the specification status is REGISTERED
     And the specification body contains "x-score"
-    And the registry contains specification "mock-id"
-    And the registry contains specification "petstore" for product "platform" at version "v1"
+    And registered spec-123 named "petstore" in "platform" at v1 1.0.0
 
   Scenario: A valid and scored AsyncAPI candidate is registered
     When the candidate "e2e/asyncapi_v30_notification_v1.yaml" is submitted
     Then the onboarding succeeds
-    And the specification status is "REGISTERED"
-    And the specification id is "mock-id"
-    And the specification version is "v1"
-    And the contract version is "ASYNCAPI_V30"
+    And the specification status is REGISTERED
+    And the specification id is spec-123
+    And the specification version is v1
+    And the contract is ASYNCAPI_V30
     And a scorecard is assigned with global score of 74
-    And the registry contains specification "mock-id"
-    And the registry contains specification "notification" for product "platform" at version "v1"
+    And registered spec-123 named "notification" in "platform" at v1 1.0.0
 
   Scenario: A candidate missing required info is not onboarded
     When the candidate "e2e/openapi_v30_missing_required_info.yaml" is submitted
     Then the onboarding fails
-    And a violation with code "MISSING_DATA" is reported
+    And a violation MISSING_DATA is reported
 
   Scenario: A candidate having a malformed version is not onboarded
     When the candidate "e2e/openapi_v30_malformed_version.yaml" is submitted
     Then the onboarding fails
-    And a violation with code "MALFORMED_VERSION" is reported
+    And a violation MALFORMED_VERSION is reported
 
   Scenario: A candidate missing required metadata is not onboarded
     When the candidate "e2e/openapi_v30_missing_required_metadata.yaml" is submitted
     Then the onboarding fails
-    And a violation with code "MISSING_DATA" is reported
+    And a violation MISSING_DATA is reported
 
   Scenario: A candidate having a malformed revision is not onboarded
     When the candidate "e2e/openapi_v30_malformed_revision.yaml" is submitted
     Then the onboarding fails
-    And a violation with code "MALFORMED_REVISION" is reported
+    And a violation MALFORMED_REVISION is reported
 
   Scenario: A candidate missing non-mandatory info is onboarded
     When the candidate "e2e/openapi_v30_missing_non_required_info.yaml" is submitted
     Then the onboarding succeeds
-    And the specification status is "REGISTERED"
+    And the specification status is REGISTERED
     And no violation reported
 
   Scenario: A candidate missing non-mandatory metadata is onboarded
     When the candidate "e2e/openapi_v30_missing_non_required_metadata.yaml" is submitted
     Then the onboarding succeeds
-    And the specification status is "REGISTERED"
+    And the specification status is REGISTERED
     And no violation reported
 
   Scenario: A valid candidate scored under the minimal threshold is not onboarded
     When the candidate "e2e/openapi_v30_under_minimal_scoring_threshold.yaml" is submitted
     Then the onboarding fails
-    And a violation with code "INSUFFICIENT_SCORING" is reported
+    And a violation INSUFFICIENT_SCORING is reported
 
   Scenario: A valid candidate is not registered when the scorer is not available
     Given the scorer cannot score specifications
     When the candidate "e2e/openapi_v30_petstore_v1.yaml" is submitted
     Then the onboarding succeeds
-    And the specification status is "VALID"
+    And the specification status is VALID
     And no specification id is assigned
     And no scorecard is assigned
-    And a warning with code "DEPENDENCY_NOT_AVAILABLE" is reported
+    And a warning DEPENDENCY_NOT_AVAILABLE is reported
 
   Scenario: A valid candidate is not registered when the registry is not available
     Given the registry cannot register specifications
     When the candidate "e2e/openapi_v30_petstore_v1.yaml" is submitted
     Then the onboarding succeeds
-    And the specification status is "SCORED"
+    And the specification status is SCORED
     And no specification id is assigned
-    And a warning with code "DEPENDENCY_NOT_AVAILABLE" is reported
+    And a warning DEPENDENCY_NOT_AVAILABLE is reported
 
   Scenario: An onboarded candidate gets a revision
-    When the candidate "e2e/openapi_v30_petstore_v1.yaml" is submitted
+    When the candidate "e2e/openapi_v30_petstore_v1.yaml" is submitted on 2026-07-01
     Then the onboarding succeeds
-    And the specification id is "mock-id"
-    And the revision is "1.0.0"
-    And the registry contains specification "petstore" for product "platform" at version "v1" with revision "1.0.0"
+    And the specification id is spec-123
+    And the specification revision is 1.0.0
+    And the audit contains "candidate onboarded" on 2026-07-01
+    And registered spec-123 named "petstore" in "platform" at v1 1.0.0
 
   Scenario: An update on a registered specification creates a new revision
-    Given the registry holds specification "petstore" for product "platform" at version "v1" with revision "1.0.0"
-    When the candidate "e2e/openapi_v30_petstore_v1.yaml" is submitted
+    Given the registry holds spec-456 named "petstore" in "platform" at v1 1.0.0
+    When the candidate "e2e/openapi_v30_petstore_v1.yaml" is submitted on 2026-07-01
     Then the onboarding succeeds
-    And the specification status is "REGISTERED"
-    And the specification id is "mock-id"
-    And the specification version is "v1"
-    And the revision is "1.0.1"
-    And the registry contains specification "mock-id"
-    And the registry contains specification "petstore" for product "platform" at version "v1" with revision "1.0.1"
+    And the specification status is REGISTERED
+    And the specification id is spec-123
+    And the specification version is v1
+    And the specification revision is 1.0.1
+    And the audit contains "candidate onboarded" on 2026-07-01
+    And registered spec-123 named "petstore" in "platform" at v1 1.0.1
 
   Scenario: A candidate having a next revision is onboarded
-    Given the registry holds specification "petstore" for product "platform" at version "v1" with revision "1.0.0"
-    When the candidate "e2e/openapi_v30_petstore_v1_1_0_1.yaml" is submitted
+    Given the registry holds spec-456 named "petstore" in "platform" at v1 1.0.0
+    When the candidate "e2e/openapi_v30_petstore_v1_1_0_1.yaml" is submitted on 2026-07-01
     Then the onboarding succeeds
-    And the specification status is "REGISTERED"
-    And the specification version is "v1"
-    And the revision is "1.0.1"
-    And the registry contains specification "petstore" for product "platform" at version "v1" with revision "1.0.1"
+    And the specification status is REGISTERED
+    And the specification id is spec-123
+    And the specification version is v1
+    And the specification revision is 1.0.1
+    And the audit contains "candidate onboarded" on 2026-07-01
+    And registered spec-123 named "petstore" in "platform" at v1 1.0.1
 
   Scenario: A candidate having a previous revision is onboarded
-    Given the registry holds specification "petstore" for product "platform" at version "v1" with revision "1.0.1"
-    When the candidate "e2e/openapi_v30_petstore_v1_1_0_0.yaml" is submitted
+    Given the registry holds spec-123 named "petstore" in "platform" at v1 1.0.1
+    When the candidate "e2e/openapi_v30_petstore_v1_1_0_0.yaml" is submitted on 2026-07-01
     Then the onboarding succeeds
-    And the specification status is "REGISTERED"
-    And the specification version is "v1"
-    And the revision is "1.0.2"
-    And the registry contains specification "petstore" for product "platform" at version "v1" with revision "1.0.2"
-    And a warning with code "REVISION_AUTO_INCREMENTED" is reported
+    And the specification status is REGISTERED
+    And the specification version is v1
+    And the specification revision is 1.0.2
+    And the audit contains "candidate onboarded" on 2026-07-01
+    And registered spec-123 named "petstore" in "platform" at v1 1.0.2
+    And a warning REVISION_AUTO_INCREMENTED is reported
 
   Scenario: A candidate having a disaligned revision is onboarded
-    When the candidate "e2e/openapi_v30_petstore_v1_0_0_1.yaml" is submitted
+    When the candidate "e2e/openapi_v30_petstore_v1_0_0_1.yaml" is submitted on 2026-07-01
     Then the onboarding succeeds
-    And the specification status is "REGISTERED"
-    And the specification version is "v1"
-    And the revision is "1.0.0"
-    And the registry contains specification "petstore" for product "platform" at version "v1" with revision "1.0.0"
-    And a warning with code "REVISION_NOT_ALIGNED" is reported
+    And the specification status is REGISTERED
+    And the specification version is v1
+    And the specification revision is 1.0.0
+    And the audit contains "candidate onboarded" on 2026-07-01
+    And registered spec-123 named "petstore" in "platform" at v1 1.0.0
+    And a warning REVISION_NOT_ALIGNED is reported
 
+  Scenario: To actualise the score of an existing revision
+    Given the registry holds spec-456 named "petstore" in "platform" at v1 1.0.0
+    When scoring spec-456 on 2026-07-01
+    Then the scoring succeeds
+    And the specification id is spec-456
+    And the specification status is REGISTERED
+    And the specification version is v1
+    And the specification revision is 1.0.0
+    And the specification body contains "x-score: 74"
+    And the audit contains "specification scored" on 2026-07-01
+    And registered spec-456 named "petstore" in "platform" at v1 1.0.0
+
+  Scenario: To associate a running component with an existing revision
+    Given the registry holds spec-456 named "petstore" in "platform" at v1 1.0.0
+    When associating spec-456 with component "X" 1.0.0 on 2026-07-01
+    Then the implementation succeeds
+    And the specification id is spec-456
+    And the specification status is REGISTERED
+    And the specification version is v1
+    And the specification revision is 1.0.0
+    And the specification body contains "x-component-name: X"
+    And the specification body contains "x-component-revision: 1.0.0"
+    And the audit contains "specification implemented" on 2026-07-01
+    And registered spec-456 named "petstore" in "platform" at v1 1.0.0
+
+  Scenario: Updating an existing revision using an overlay registers a new revision
+    Given the registry holds spec-456 named "petstore" in "platform" at v1 1.0.0
+    When applying overlay "e2e/overlay_test.yaml" to spec-456 on 2026-07-01
+    Then the overlaying succeeds
+    And the specification id is spec-123
+    And the specification status is REGISTERED
+    And the specification version is v1
+    And the specification revision is 1.0.1
+    And the specification body contains "x-test: test"
+    And the audit contains "specification overlaid" on 2026-07-01
+    And registered spec-123 named "petstore" in "platform" at v1 1.0.1

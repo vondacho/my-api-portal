@@ -20,7 +20,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.function.Supplier;
 
 @Configuration
 public class RegistrationConfig {
@@ -28,14 +30,21 @@ public class RegistrationConfig {
     private final URIReader[] readers = { new URIFileReader(), new URIHttpReader() };
 
     @Bean
-    public RegistrationService registrationService(Registry registry, ScorerDelegate remoteScorer) {
+    public Supplier<LocalDateTime> nowProvider() {
+        return LocalDateTime::now;
+    }
+
+    @Bean
+    public RegistrationService registrationService(Registry registry, ScorerDelegate remoteScorer, Supplier<LocalDateTime> nowProvider) {
         return new RegistrationService(
             receptionist(),
             parser(),
             scorer(remoteScorer),
             scoreOverlayer(),
-            versionEnforcer(registry),
-            registry);
+            componentOverlayer(),
+            revisor(registry),
+            registry,
+            nowProvider);
     }
 
     public Receptionist receptionist() {
@@ -56,7 +65,7 @@ public class RegistrationConfig {
                 Contract.Version.ASYNCAPI_V30, () -> new AASV30Parser(readers)));
     }
 
-    public Revisor versionEnforcer(Registry registry) {
+    public Revisor revisor(Registry registry) {
         return new Revisor(registry);
     }
 
@@ -64,6 +73,14 @@ public class RegistrationConfig {
         return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_scores.yaml"),
                 new OverlayV10Parser(readers, (state, _) -> Map.of(
                     "score", state.score()
+                )));
+    }
+
+    public Overlayer componentOverlayer() {
+        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_component.yaml"),
+                new OverlayV10Parser(readers, (state, _) -> Map.of(
+                        "name", state.metadata().componentName(),
+                        "revision", state.metadata().componentRevision().semver().getVersion()
                 )));
     }
 
