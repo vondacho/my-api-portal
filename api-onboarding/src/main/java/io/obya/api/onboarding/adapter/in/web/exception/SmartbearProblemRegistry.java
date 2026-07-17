@@ -21,7 +21,7 @@ public class SmartbearProblemRegistry implements ProblemRegistry {
       return new ProblemSample(
          URI.create("https://problems-registry.smartbear.com/validation-error"),
          "Validation Error",
-         "The request is not valid.",
+         "The request cannot be processed due to semantic errors, such as failed validation",
               UNPROCESSABLE_ENTITY
       );
    }

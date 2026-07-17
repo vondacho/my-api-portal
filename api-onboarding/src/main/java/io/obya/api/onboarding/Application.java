@@ -30,12 +30,12 @@ public class Application {
 
            @Override
            public void onEntryRemovedEvent(@NonNull EntryRemovedEvent<CircuitBreaker> entryRemoveEvent) {
-
+              entryRemoveEvent.getRemovedEntry().getEventPublisher().onEvent(event -> log.info(event.toString()));
            }
 
            @Override
            public void onEntryReplacedEvent(@NonNull EntryReplacedEvent<CircuitBreaker> entryReplacedEvent) {
-
+               entryReplacedEvent.getNewEntry().getEventPublisher().onEvent(event -> log.info(event.toString()));
            }
         };
     }
@@ -43,7 +43,7 @@ public class Application {
     @Bean
     public RegistryEventConsumer<Retry> myRetryRegistryEventConsumer() {
 
-        return new RegistryEventConsumer<Retry>() {
+        return new RegistryEventConsumer<>() {
             @Override
             public void onEntryAddedEvent(@NonNull EntryAddedEvent<Retry> entryAddedEvent) {
                 entryAddedEvent.getAddedEntry().getEventPublisher().onEvent(event -> log.info(event.toString()));
@@ -51,12 +51,12 @@ public class Application {
 
             @Override
             public void onEntryRemovedEvent(@NonNull EntryRemovedEvent<Retry> entryRemoveEvent) {
-
+                entryRemoveEvent.getRemovedEntry().getEventPublisher().onEvent(event -> log.info(event.toString()));
             }
 
             @Override
             public void onEntryReplacedEvent(@NonNull EntryReplacedEvent<Retry> entryReplacedEvent) {
-
+                entryReplacedEvent.getNewEntry().getEventPublisher().onEvent(event -> log.info(event.toString()));
             }
         };
     }

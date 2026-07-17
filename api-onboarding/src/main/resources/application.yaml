@@ -7,7 +7,7 @@ scorer:
   adapter: dummy
 
 registry:
-  adapter: strapi
+  adapter: dummy
 
 strapi:
   base-url: http://localhost:1337/api

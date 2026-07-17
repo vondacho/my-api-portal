@@ -6,7 +6,6 @@ import io.obya.api.onboarding.appl.usecase.workflow.State;
 import io.obya.api.onboarding.domain.model.Contract;
 import io.obya.api.onboarding.domain.model.Info;
 import io.obya.api.onboarding.domain.model.Metadata;
-import io.obya.api.onboarding.domain.model.ScoreSummary;
 
 import java.net.URI;
 import java.util.List;
@@ -29,7 +28,7 @@ public record CandidateProcessed(
                 state.metadata(),
                 state.contract().version(),
                 state.status(),
-                ScoreSummary.from(state.score()),
+                state.score().isUndefined() ? null : ScoreSummary.from(state.score()),
                 violations.isEmpty() ? null : violations.stream().sorted().toList());
     }
 }

@@ -3,12 +3,12 @@ package io.obya.api.onboarding.appl.usecase.config;
 import io.obya.api.onboarding.appl.out.ScorerDelegate;
 import io.obya.api.onboarding.appl.out.Registry;
 import io.obya.api.onboarding.appl.usecase.RegistrationService;
+import io.obya.api.onboarding.appl.usecase.processing.reader.ClasspathResourceReader;
 import io.obya.api.onboarding.domain.model.Violation;
 import io.obya.api.onboarding.appl.usecase.processing.*;
 import io.obya.api.onboarding.appl.usecase.processing.aas.AASV20Parser;
 import io.obya.api.onboarding.appl.usecase.processing.aas.AASV26Parser;
 import io.obya.api.onboarding.appl.usecase.processing.aas.AASV30Parser;
-import io.obya.api.onboarding.appl.usecase.processing.oai.OverlayV10Parser;
 import io.obya.api.onboarding.appl.usecase.processing.oas.OASV30Parser;
 import io.obya.api.onboarding.appl.usecase.processing.oas.OASV31Parser;
 import io.obya.api.onboarding.appl.usecase.processing.oas.OASV32Parser;
@@ -27,7 +27,11 @@ import java.util.function.Supplier;
 @Configuration
 public class RegistrationConfig {
 
-    private final URIReader[] readers = { new URIFileReader(), new URIHttpReader() };
+    private final URIReader[] readers = {
+            new ClasspathResourceReader(),
+            new URIFileReader(),
+            new URIHttpReader()
+    };
 
     @Bean
     public Supplier<LocalDateTime> nowProvider() {
@@ -70,39 +74,43 @@ public class RegistrationConfig {
     }
 
     public Overlayer scoreOverlayer() {
-        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_scores.yaml"),
-                new OverlayV10Parser(readers, (state, _) -> Map.of(
+        return Overlayer.fromClasspath(classpathOf("overlay_scores_v1.yaml"),
+                (state, _) -> Map.of(
                     "score", state.score()
-                )));
+        ));
     }
 
     public Overlayer componentOverlayer() {
-        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_component.yaml"),
-                new OverlayV10Parser(readers, (state, _) -> Map.of(
-                        "name", state.metadata().componentName(),
-                        "revision", state.metadata().componentRevision().semver().getVersion()
-                )));
+        return Overlayer.fromClasspath(classpathOf("overlay_component_v1.yaml"),
+                (state, _) -> Map.of(
+                "name", state.metadata().componentName(),
+                "revision", state.metadata().componentRevision().semver().getVersion()
+        ));
     }
 
     public Overlayer violationOverlayer() {
-        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_violations.yaml"),
-                new OverlayV10Parser(readers, (_, exceptions) -> Map.of(
+        return Overlayer.fromClasspath(classpathOf("overlay_violations_v1.yaml"),
+                (_, exceptions) -> Map.of(
                 "violations", Violation.from(exceptions)
-                )));
+        ));
     }
 
     public Overlayer metricOverlayer() {
-        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_metrics.yaml"),
-                new OverlayV10Parser(readers, (_,_) -> Map.of()));
+        return Overlayer.fromClasspath(classpathOf("overlay_metrics_v1.yaml"),
+                (_,_) -> Map.of());
     }
 
     public Overlayer rbacAbacOverlayer() {
-        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_rbac_abac.yaml"),
-                new OverlayV10Parser(readers, (_,_) -> Map.of()));
+        return Overlayer.fromClasspath(classpathOf("overlay_rbac_abac_v1.yaml"),
+                (_,_) -> Map.of());
     }
 
     public Overlayer samplesOverlayer() {
-        return new Overlayer(URI.create("file:///Users/olivier/Labor/github/my-api-portal/api-onboarding/src/main/resources/overlays/overlay_samples.yaml"),
-                new OverlayV10Parser(readers, (_,_) -> Map.of()));
+        return Overlayer.fromClasspath(classpathOf("overlay_samples_v1.yaml"),
+                (_,_) -> Map.of());
+    }
+
+    private URI classpathOf(String filename) {
+        return URI.create("classpath:///api/registration/" + filename);
     }
 }

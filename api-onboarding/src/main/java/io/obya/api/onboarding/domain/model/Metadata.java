@@ -1,8 +1,8 @@
 package io.obya.api.onboarding.domain.model;
 
 public record Metadata(
-        String apiName,
-        Revision apiRevision,
+        String name,
+        Revision revision,
         String bundleName,
         String productName,
         String componentName,
@@ -15,7 +15,7 @@ public record Metadata(
     public static final String META_COMPONENT_NAME_KEY = "x-component-name";
     public static final String META_COMPONENT_REVISION_KEY = "x-component-revision";
 
-    public Metadata withComponent(String name, Revision revision) {
-        return new Metadata(apiName, apiRevision, bundleName, productName, name, revision);
+    public Metadata withComponent(String componentName, Revision componentRevision) {
+        return new Metadata(name, revision, bundleName, productName, componentName, componentRevision);
     }
 }

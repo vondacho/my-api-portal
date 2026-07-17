@@ -8,6 +8,9 @@ import static io.obya.api.onboarding.domain.model.Violation.Code.MALFORMED_VERSI
 
 public record Version(int major) {
 
+    public static final Version V1 =  new Version(1);
+    public static final Version V2 = new Version(2);
+
     private static final String pattern = "^v[0-9][1-9]*$";
 
     public static final Predicate<String> matcher = Pattern.compile(pattern).asMatchPredicate();

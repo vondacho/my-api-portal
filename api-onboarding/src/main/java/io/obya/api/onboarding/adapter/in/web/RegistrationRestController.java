@@ -1,6 +1,8 @@
 package io.obya.api.onboarding.adapter.in.web;
 
 import io.obya.api.onboarding.adapter.in.web.model.CandidateProcessed;
+import io.obya.api.onboarding.adapter.in.web.model.OverlayApplied;
+import io.obya.api.onboarding.adapter.in.web.model.ScoreSummary;
 import io.obya.api.onboarding.appl.usecase.OnBoardingException;
 import io.obya.api.onboarding.adapter.in.web.model.Candidate;
 import io.obya.api.onboarding.appl.usecase.RegistrationService;
@@ -34,27 +36,25 @@ public class RegistrationRestController implements RegistrationApi {
     }
 
     @Override
-    public void score(SpecificationId id, Scorecard scorecard) {
-
+    public ResponseEntity<ScoreSummary> score(SpecificationId id) {
+        Try<State> state =  registrationService.score(id);
+        return state.map(s -> ResponseEntity
+                        .status(OK)
+                        .body(ScoreSummary.from(s.score(), Violation.from(state.getExceptions()))))
+                .getOrThrow(() -> new OnBoardingException(Violation.from(state.getExceptions())));
     }
 
     @Override
-    public void implement(SpecificationId id, Implementation implementation) {
-
+    public void implement(SpecificationId id, Component component) {
+        Try<State> state =  registrationService.implement(id, component);
+        state.map(_ -> ResponseEntity.status(NO_CONTENT).build())
+                .getOrThrow(() -> new OnBoardingException(Violation.from(state.getExceptions())));
     }
 
     @Override
-    public void overlay(SpecificationId id, Candidate overlay) {
-
-    }
-
-    @Override
-    public CandidateProcessed get(SpecificationId id) {
-        return null;
-    }
-
-    @Override
-    public ScoreSummary getScore(SpecificationId id) {
-        return null;
+    public ResponseEntity<OverlayApplied> overlay(SpecificationId id, Candidate overlay) {
+        Try<State> state =  registrationService.overlay(id, overlay.source());
+        return state.map(s -> ResponseEntity.status(CREATED).body(new OverlayApplied(s.id().id())))
+                .getOrThrow(() -> new OnBoardingException(Violation.from(state.getExceptions())));
     }
 }

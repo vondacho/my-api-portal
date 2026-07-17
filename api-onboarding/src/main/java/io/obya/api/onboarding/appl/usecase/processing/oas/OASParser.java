@@ -95,7 +95,7 @@ abstract class OASParser<M> implements Processor<State> {
                                 .map(s -> Revision.from(s, MALFORMED_REVISION.failure(META_COMPONENT_REVISION_KEY, "semver")))
                                 .orElse(null)
                 ))
-                .filter(m -> nonEmpty(m::apiName), MISSING_DATA.failure(META_API_NAME_KEY), true)
+                .filter(m -> nonEmpty(m::name), MISSING_DATA.failure(META_API_NAME_KEY), true)
                 .filter(m -> nonEmpty(m::productName), MISSING_DATA.failure(META_PRODUCT_NAME_KEY), true)
                 .filter(m -> nonEmpty(m::bundleName), MISSING_DATA.failure(META_BUNDLE_NAME_KEY), true)
                 .map(state::metadata);

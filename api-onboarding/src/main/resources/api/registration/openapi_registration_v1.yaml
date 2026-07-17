@@ -1,0 +1,374 @@
+openapi: 3.1.0
+info:
+  title: API Onboarding - Registration API
+  version: 1.0.0
+  description: Minimal API surface for submitting Candidates to the registration REST controller.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+  contact:
+    name: API Onboarding Team
+    email: me@proton.me
+servers:
+  - url: /api/v1
+    description: API onboarding server running in the DEV cluster
+paths:
+  /registrations:
+    post:
+      operationId: submitCandidate
+      summary: Submit a Candidate
+      description: Accepts a Candidate payload describing a specification source to be processed.
+      tags:
+        - registrations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Candidate'
+      responses:
+        "200":
+          description: Ok — candidate has been validated, and scored successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateProcessed'
+        "201":
+          description: Ok — candidate has been validated, scored, and registered successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateProcessed'
+        "400":
+          description: The request was malformed or could not be processed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'openapi_problem_rfc_v1.json#/components/schemas/ProblemDetails'
+        "422":
+          description: Your client issued a request that failed validation.
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'openapi_problem_rfc_v1.json#/components/schemas/ProblemDetails'
+
+  /registrations/{id}/score:
+    put:
+      operationId: scoreSpecification
+      summary: Score an existing specification resource
+      description: Actualises the score for an existing specification resource.
+      tags:
+        - registrations
+      parameters:
+        - name: id
+          in: path
+          description: ID of specification that needs to be updated
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok — existing specification has been scored successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scorecard'
+        "400":
+          $ref: 'openapi_problem_rfc_v1.json#/components/responses/BadRequest'
+        "422":
+          description: Your client issued a request that failed validation.
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'openapi_problem_rfc_v1.json#/components/schemas/ProblemDetails'
+
+  /registrations/{id}/component:
+    put:
+      operationId: implementSpecification
+      summary: Implement an existing specification resource
+      description: Assigns a component to an existing specification resource, effectively implementing it.
+      tags:
+        - registrations
+      parameters:
+        - name: id
+          in: path
+          description: ID of specification that needs to be implemented
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Component'
+      responses:
+        "204":
+          description: Ok — existing specification has been implemented successfully.
+        "400":
+          description: The request was malformed or could not be processed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'openapi_problem_rfc_v1.json#/components/schemas/ProblemDetails'
+        "422":
+          description: Your client issued a request that failed validation.
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'openapi_problem_rfc_v1.json#/components/schemas/ProblemDetails'
+
+  /registrations/{id}/overlay:
+    post:
+      operationId: overlaySpecification
+      summary: Overlay an existing specification resource
+      description: Applies an overlay to an existing specification resource which creates a new revision.
+      tags:
+        - registrations
+      parameters:
+        - name: id
+          in: path
+          description: ID of specification that needs to be overlaid
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Candidate'
+      responses:
+        "201":
+          description: Ok — existing specification has been overlaid successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OverlayApplied'
+        "400":
+          description: The request was malformed or could not be processed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'openapi_problem_rfc_v1.json#/components/schemas/ProblemDetails'
+        "422":
+          description: Your client issued a request that failed validation.
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'openapi_problem_rfc_v1.json#/components/schemas/ProblemDetails'
+          
+components:
+  schemas:
+    Candidate:
+      type: object
+      properties:
+        source:
+          type: string
+          format: uri
+          description: "URI pointing to the specContent"
+      required:
+        - source
+
+    CandidateProcessed:
+      type: object
+      description: "Response for accepted candidate submission"
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for the candidate"
+        source:
+          type: string
+          format: uri
+          description: "URI pointing to the specContent"
+        info:
+          $ref: '#/components/schemas/Info'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        contract:
+          $ref: '#/components/schemas/Contract'
+        status:
+          $ref: '#/components/schemas/Status'
+        scorecard:
+          $ref: '#/components/schemas/Scorecard'
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+          description: "Detailed violations encountered during processing"
+      required:
+        - source
+        - info
+        - contract
+        - status
+
+    Info:
+      type: object
+      description: "Basic information about the candidate"
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        version:
+          type: string
+          pattern: '^v\d{1}$'
+      required:
+        - title
+        - description
+        - version
+
+    Metadata:
+      type: object
+      description: "Additional metadata about the candidate"
+      properties:
+        name:
+          type: string
+        revision:
+          type: string
+          pattern: '^\d{1}\.\d{1}\.\d{1}$'
+        bundleName:
+          type: string
+        productName:
+          type: string
+        componentName:
+          type: string
+        componentRevision:
+          type: string
+          pattern: '^\d{1}\.\d{1}\.\d{1}$'
+      required:
+        - name
+        - revision
+        - bundleName
+        - productName
+
+    Contract:
+      type: string
+      description: "Specification contract version"
+      enum:
+        - OPENAPI_V30
+        - OPENAPI_V31
+        - OPENAPI_V32
+        - ASYNCAPI_V2
+        - ASYNCAPI_V3
+        - GRAPHQLS
+        - WSDL_V11
+        - WSDL_V20
+        - OVERLAY_V10
+        - OVERLAY_V11
+      example: OPENAPI_V31
+
+    Status:
+      type: string
+      description: "Current processing status"
+      enum:
+        - IMPLEMENTED
+        - PUBLISHED
+        - REGISTERED
+        - SCORED
+        - VALID
+
+    Scorecard:
+      type: object
+      description: "Detailed scoring breakdown"
+      properties:
+        score:
+          $ref: '#/components/schemas/Score'
+        grade:
+          $ref: '#/components/schemas/Grade'
+        dimensions:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: "Name of the scoring dimension"
+              intent:
+                type: string
+                description: "Intent of the scoring dimension"
+              score:
+                $ref: '#/components/schemas/Score'
+              grade:
+                $ref: '#/components/schemas/Grade'
+            required:
+              - name
+              - intent
+              - score
+              - grade
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+          description: "Detailed violations encountered during scoring"
+      required:
+        - score
+        - grade
+
+    Score:
+      type: number
+      format: int32
+      description: "Overall quality score (0-100)"
+
+    Grade:
+      type: string
+      description: "Overall quality grade based on score"
+      enum:
+        - 'A'
+        - 'A+'
+        - 'A-'
+        - 'B'
+        - 'B-'
+        - 'B-'
+        - 'C'
+        - 'C+'
+        - 'C-'
+        - 'D'
+        - 'D+'
+        - 'D-'
+
+    Violation:
+      type: object
+      description: "Violation encountered during processing"
+      properties:
+        code:
+          type: string
+          description: "Code of violation"
+        detail:
+          type: string
+          description: "Description of violation"
+        severity:
+          type: string
+          description: "Severity of violation"
+          enum:
+            - MAJOR
+            - MINOR
+      required:
+        - code
+        - detail
+        - severity
+
+    Component:
+      type: object
+      description: "Component information for implementing a specification"
+      properties:
+        name:
+          type: string
+          description: "Name of the component"
+        revision:
+          type: string
+          description: "Revision of the component"
+          pattern: '^\d{1}\.\d{1}\.\d{1}$'
+      required:
+        - name
+        - revision
+
+    OverlayApplied:
+      type: object
+      description: "Response for successful overlay application"
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for the overlaid specification"
+      required:
+        - id

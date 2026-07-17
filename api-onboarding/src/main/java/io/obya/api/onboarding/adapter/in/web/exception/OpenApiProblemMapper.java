@@ -12,8 +12,8 @@ public class OpenApiProblemMapper extends ProblemMapper<ValidationReport> {
     }
 
      @Override
-     protected ProblemRegistry.ProblemSample defaultSample(ValidationReport report) {
-        return problemRegistry.requestIsNotValid();
+     protected ProblemRegistry.ProblemSample defaultSample(ValidationReport cause) {
+         return super.defaultSample(cause);
      }
 
     @Override

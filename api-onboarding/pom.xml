@@ -48,8 +48,14 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.oai</groupId>
-            <artifactId>swagger-request-validator-spring-webmvc</artifactId>
+            <artifactId>openapi-request-validator-spring-webmvc</artifactId>
             <version>3.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.github.resilience4j</groupId>
@@ -202,6 +208,24 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>io.github.microcks</groupId>
+            <artifactId>microcks-testcontainers</artifactId>
+            <version>0.4.4</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.testcontainers</groupId>
+                    <artifactId>testcontainers</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
+            <version>2.0.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
             <version>3.13.2</version>
@@ -211,7 +235,10 @@
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-server</artifactId>
                 </exclusion>
-                <!-- Let Spring Boot's jackson-databind own all Jackson versions at runtime -->
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-http</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-annotations</artifactId>
@@ -245,14 +272,14 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.22.0</version>
+                <version>7.23.0</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/openapi/strapi_specification_v5.json</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/api/strapi/strapi_specification_v1.json</inputSpec>
                             <generatorName>spring</generatorName>
                             <apiPackage>io.obya.api.onboarding.adapter.out.strapi.api</apiPackage>
                             <modelPackage>io.obya.api.onboarding.adapter.out.strapi.model</modelPackage>
@@ -263,6 +290,33 @@
                                 <openApiNullable>false</openApiNullable>
                                 <useBeanValidation>true</useBeanValidation>
                             </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.6.3</version>
+                <executions>
+                    <execution>
+                        <id>bundle-and-overlay-api-contracts</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${project.basedir}/scripts/bundle_registration_api.sh</executable>
+                            <arguments>
+                                <argument>openapi_registration_v1.yaml</argument>
+                                <argument>${project.build.testOutputDirectory}/api/registration</argument>
+                            </arguments>
+                            <environmentVariables>
+                                <SPEC_DIR>${project.basedir}/src/main/resources/api/registration</SPEC_DIR>
+                                <OVERLAY_DIR>${project.basedir}/src/test/resources/api/registration</OVERLAY_DIR>
+                                <USE_NVM>false</USE_NVM>
+                                <SKIP_LINT>true</SKIP_LINT>
+                            </environmentVariables>
                         </configuration>
                     </execution>
                 </executions>

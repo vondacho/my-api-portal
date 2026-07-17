@@ -3,6 +3,7 @@ package io.obya.api.onboarding.adapter.in.web.config;
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.springmvc.OpenApiValidationFilter;
 import com.atlassian.oai.validator.springmvc.OpenApiValidationInterceptor;
+import io.swagger.v3.parser.core.models.ParseOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -17,8 +18,14 @@ public class OpenApiValidationConfig implements WebMvcConfigurer {
 
     @Bean
     public OpenApiValidationInterceptor openApiValidationInterceptor() {
+        var parseOptions = new ParseOptions();
+        parseOptions.setResolveFully(true);
+        parseOptions.setResolveCombinators(true);
+        parseOptions.setFlattenComposedSchemas(true);
         return new OpenApiValidationInterceptor(OpenApiInteractionValidator
-                .createForSpecificationUrl("openapi/registration_v1.yaml").build());
+                .createForSpecificationUrl("api/registration/openapi_registration_v1.yaml")
+                .withParseOptions(parseOptions)
+                .build());
     }
 
     @Override

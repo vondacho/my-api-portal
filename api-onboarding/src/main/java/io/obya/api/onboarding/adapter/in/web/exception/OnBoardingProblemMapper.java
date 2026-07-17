@@ -14,7 +14,7 @@ public class OnBoardingProblemMapper extends ProblemMapper<List<Violation>> {
 
     @Override
     protected ProblemRegistry.ProblemSample defaultSample(List<Violation> failures) {
-       return super.defaultSample(failures);
+       return problemRegistry.requestIsNotValid();
     }
 
     @Override

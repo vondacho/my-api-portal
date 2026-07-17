@@ -9,6 +9,10 @@ import static io.obya.api.onboarding.domain.model.Violation.Code.MALFORMED_REVIS
 
 public record Revision(Semver semver) {
 
+    public static final Revision V100 = Revision.from("1.0.0");
+    public static final Revision V101 = Revision.from("1.0.1");
+    public static final Revision V200 = Revision.from("2.0.0");
+
     public static Revision from(String s) {
         return from(s, (MALFORMED_REVISION.failure(s, "semver")));
     }
@@ -31,5 +35,9 @@ public record Revision(Semver semver) {
 
     public boolean after(Revision other) {
         return this.semver.isGreaterThan(other.semver);
+    }
+
+    public String format() {
+        return semver.getVersion();
     }
 }

@@ -17,7 +17,7 @@ public class StrapiClientConfig {
     @Bean
     SpecificationApi strapiApiClient(RestClient.Builder builder, StrapiProperties props) {
         RestClient restClient = builder
-                .baseUrl(props.baseUrl().toString())
+                .baseUrl("http://localhost:1337/api")
                 .build();
 
         HttpServiceProxyFactory factory = HttpServiceProxyFactory

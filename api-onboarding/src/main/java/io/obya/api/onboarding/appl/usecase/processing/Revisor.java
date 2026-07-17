@@ -25,8 +25,8 @@ public class Revisor implements Processor<State> {
             final Version major = st.info().version();
 
             Try<Revision> latest = registry
-                    .at(st.metadata().apiName(), st.metadata().productName(), major)
-                    .map(spec -> spec.metadata().apiRevision());
+                    .at(st.metadata().name(), st.metadata().productName(), major)
+                    .map(spec -> spec.metadata().revision());
 
             if (latest.isFailure()) {
                 return latest.recoverWithOther(_ -> enforcer().process(state));
@@ -37,10 +37,10 @@ public class Revisor implements Processor<State> {
 
     private Processor<State> enforcer() {
         return state -> state.flatMap(st -> {
-            if (isNull(st.metadata().apiRevision())) {
+            if (isNull(st.metadata().revision())) {
                 return Try.success(alignRevisionOn(st, Revision.from(st.info().version())));
             }
-            if (!st.metadata().apiRevision().matches(st.info().version())) {
+            if (!st.metadata().revision().matches(st.info().version())) {
                 return new Try.Partial<>(alignRevisionOn(st, Revision.from(st.info().version())),
                         List.of(REVISION_NOT_ALIGNED.failure(META_API_REVISION_KEY, st.info().version()).get()));
             }
@@ -50,14 +50,14 @@ public class Revisor implements Processor<State> {
 
     private Processor<State> enforcer(Revision currentLatest) {
         return state -> state.flatMap(st -> {
-            if (isNull(st.metadata().apiRevision())) {
+            if (isNull(st.metadata().revision())) {
                 return Try.success(alignRevisionOn(st, currentLatest.next()));
             }
-            if (!st.metadata().apiRevision().matches(st.info().version())) {
+            if (!st.metadata().revision().matches(st.info().version())) {
                 return new Try.Partial<>(alignRevisionOn(st, currentLatest.next()),
                     List.of(REVISION_NOT_ALIGNED.failure(META_API_REVISION_KEY, currentLatest.next()).get()));
             }
-            if (!st.metadata().apiRevision().after(currentLatest)) {
+            if (!st.metadata().revision().after(currentLatest)) {
                 return new Try.Partial<>(alignRevisionOn(st, currentLatest.next()),
                     List.of(REVISION_AUTO_INCREMENTED.failure(META_API_REVISION_KEY, currentLatest.next()).get()));
             }
@@ -67,7 +67,7 @@ public class Revisor implements Processor<State> {
 
     private State alignRevisionOn(State st, Revision currentLatest) {
         return st.metadata(new Metadata(
-            st.metadata().apiName(),
+            st.metadata().name(),
             currentLatest,
             st.metadata().bundleName(),
             st.metadata().productName(), null, null));

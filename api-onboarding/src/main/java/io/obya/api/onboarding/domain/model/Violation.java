@@ -1,8 +1,11 @@
 package io.obya.api.onboarding.domain.model;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.function.Supplier;
 
+@Slf4j
 public record Violation(String detail, Code code, Severity severity) implements Comparable<Violation> {
 
     public enum Severity {
@@ -16,6 +19,7 @@ public record Violation(String detail, Code code, Severity severity) implements 
         OVERLAYING_FAILED("Overlaying by given uri [%s] failed [%s].", Severity.MINOR),
         PROCESSING_FAILED("Processing of given uri [%s] failed [%s].", Severity.MAJOR),
         MISSING_DATA("A required data is missing or empty [%s].", Severity.MAJOR),
+        MALFORMED_URI("The uri [%s] is not compliant [%s].", Severity.MAJOR),
         MALFORMED_VERSION("The version [%s] is not compliant [%s].", Severity.MAJOR),
         MALFORMED_REVISION("The revision [%s] is not compliant [%s].", Severity.MAJOR),
         REVISION_NOT_ALIGNED("The revision [%s] is not aligned with version [%s].", Severity.MINOR),
@@ -37,7 +41,10 @@ public record Violation(String detail, Code code, Severity severity) implements 
         }
 
         public Supplier<Failure> failure(Object... args) {
-            return () -> new Failure(this, args);
+            return () -> {
+                log.warn(String.format(detail, args), this);
+                return new Failure(this, args);
+            };
         }
     }
 

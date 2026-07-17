@@ -2,9 +2,9 @@ package io.obya.api.onboarding.adapter.in.web;
 
 import io.obya.api.onboarding.adapter.in.web.model.Candidate;
 import io.obya.api.onboarding.adapter.in.web.model.CandidateProcessed;
-import io.obya.api.onboarding.domain.model.Implementation;
-import io.obya.api.onboarding.domain.model.ScoreSummary;
-import io.obya.api.onboarding.domain.model.Scorecard;
+import io.obya.api.onboarding.adapter.in.web.model.OverlayApplied;
+import io.obya.api.onboarding.domain.model.Component;
+import io.obya.api.onboarding.adapter.in.web.model.ScoreSummary;
 import io.obya.api.onboarding.domain.model.SpecificationId;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,10 +53,9 @@ public interface RegistrationApi {
             tags = {"registrations"}
     )
     @PutMapping("/{id}/score")
-    void score(
+    ResponseEntity<ScoreSummary> score(
             @Parameter(description = "ID of the specification being scored", required = true, schema = @Schema(type = "string"))
-            @PathVariable SpecificationId id,
-            @RequestBody Scorecard scorecard);
+            @PathVariable(name = "id") SpecificationId id);
 
     @Operation(
             operationId = "implementSpecification",
@@ -64,10 +64,11 @@ public interface RegistrationApi {
             tags = {"registrations"}
     )
     @PutMapping("/{id}/component")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     void implement(
             @Parameter(description = "ID of the specification being implemented", required = true, schema = @Schema(type = "string"))
-            @PathVariable SpecificationId id,
-            @RequestBody Implementation implementation);
+            @PathVariable(name = "id") SpecificationId id,
+            @RequestBody Component component);
 
     @Operation(
             operationId = "overlaySpecification",
@@ -75,31 +76,9 @@ public interface RegistrationApi {
             description = "Accepts a Candidate payload describing an overlay source to be applied to an existing specification resource.",
             tags = {"registrations"}
     )
-    @PutMapping("/{id}/overlay")
-    void overlay(
+    @PostMapping("/{id}/overlay")
+    ResponseEntity<OverlayApplied> overlay(
             @Parameter(description = "ID of the specification receiving the overlay", required = true, schema = @Schema(type = "string"))
-            @PathVariable SpecificationId id,
+            @PathVariable(name = "id") SpecificationId id,
             @RequestBody Candidate overlay);
-
-    @Operation(
-            operationId = "getSpecification",
-            summary = "Get a specification resource",
-            description = "Returns the current state of a registered specification.",
-            tags = {"registrations-extended"}
-    )
-    @GetMapping("/{id}")
-    CandidateProcessed get(
-            @Parameter(description = "ID of the specification to retrieve", required = true, schema = @Schema(type = "string"))
-            @PathVariable SpecificationId id);
-
-    @Operation(
-            operationId = "getSpecificationScore",
-            summary = "Get the score summary for a specification",
-            description = "Returns the current score summary for a registered specification.",
-            tags = {"registrations"}
-    )
-    @GetMapping("/{id}/score")
-    ScoreSummary getScore(
-            @Parameter(description = "ID of the specification whose score is requested", required = true, schema = @Schema(type = "string"))
-            @PathVariable SpecificationId id);
 }
